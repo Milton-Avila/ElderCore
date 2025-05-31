@@ -1,21 +1,19 @@
 import json
 
 # Local
+from src.packages.char_sheet import EQUIPMENT_SLOTS
+from src.utils.sheet_view import display_character_sheet
 from src.models.character import Character
-from src.models.equipment import Equipment, EquipmentSet
 
 class RPGSystem:
     def __init__(self):
         self.characters = []
-        self.equipments = []
 
     def setup(self):
         self._load_chars()
-        self._load_equipments()
-
+        
     def show_characters(self):
-        for char in self.characters:
-            char.display()
+        display_character_sheet(self.characters)
 
     def _load_chars(self):
         with open('src/data/chars.json', 'r', encoding='utf-8') as file:
@@ -28,6 +26,3 @@ class RPGSystem:
             characters.append(character)
         
         self.characters = characters
-
-    def _load_equipments(self):
-        ...

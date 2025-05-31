@@ -1,22 +1,33 @@
 [
-    {
-        "name": "Kharos",
-        "title": "O Vigilia sem Lamento",
-        "attributes": {
-            "strength": 12,
-            "dexterity": 14,
-            "constitution": 14,
-            "charisma": 13
-        }
+  {
+    "name": "Kharos",
+    "title": "O Vigilia sem Lamento",
+    "attributes": {
+        "strength": 12,
+        "dexterity": 14,
+        "constitution": 14,
+        "charisma": 13
     },
-    {
-        "name": "Lia",
-        "title": "A Dançarina Mística",
-        "attributes": {
-            "strength": 10,
-            "dexterity": 16,
-            "constitution": 10,
-            "charisma": 14
+    "equipment": [
+        {
+            "name": "Bavalack",
+            "title": "The Pact Blade",
+            "slot": "main_hand",
+            "modifiers": {
+            "dexterity": 1,
+            "constitution": 1
+            }
         }
+    ]
+  },
+  {
+    "name": "Lia",
+    "title": "A Dançarina Mística",
+    "attributes": {
+        "strength": 10,
+        "dexterity": 16,
+        "constitution": 10,
+        "charisma": 14
     }
+  }
 ]

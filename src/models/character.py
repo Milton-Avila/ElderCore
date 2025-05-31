@@ -1,55 +1,73 @@
 from src.packages.char_sheet import ATTR_NAMES
-from src.models.equipment import EquipmentSet
-
 
 class Character:
-    def __init__(self, name: str, title: str, attributes: dict):
+    def __init__(self, name: str, title: str, attributes: dict, equipment: list[dict] = []):
         self.name = name
         self.title = title
-        self.attributes = Attributes(**attributes)
-        self.equipment = EquipmentSet()
+        self.attributes = Attributes(attributes)
+        self.equipment = {}  # slot -> Equipment
 
-    def display(self):
-        GREEN = "\033[92m"
-        RED = "\033[91m"
-        RESET = "\033[0m"
+        for item_data in equipment:
+            self.equip(item_data)
 
-        line_len = 72
-        header = f" Character Sheet "
-        border_top = GREEN + "┌" + header.center(line_len, "─") + "┐" + RESET
-        border_attr = GREEN + "├" + " Attributes ".center(line_len, "─") + "┤" + RESET
-        border_eq = GREEN + "├" + " Equipment ".center(line_len, "─") + "┤" + RESET
-        border_bottom = GREEN + "└" + "─" * line_len + "┘" + RESET
+    def equip(self, item_data: dict):
+        item = Equipment(
+            name=item_data["name"],
+            title=item_data["title"],
+            slot=item_data["slot"],
+            modifiers=item_data.get("modifiers", {})
+        )
+        self.equipment[item.slot] = item
 
-        print(border_top)
-        print(f"{GREEN}│{RESET} {RED}Name{RESET}     : {self.name:<60}{GREEN}│{RESET}")
-        print(f"{GREEN}│{RESET} {RED}Title{RESET}    : {self.title:<60}{GREEN}│{RESET}")
-        print(border_attr)
+    def get_equipment(self, slot: str):
+        return self.equipment.get(slot, None)
+    
+    def get_equipment_attr_bonus(self):
+        modifiers = {}
+        for item in self.equipment.values():
+            for attr, val in item.modifiers.items():
+                modifiers[attr] = modifiers.get(attr, 0) + val
+        return modifiers
 
-        attrs = self.attributes.to_dict()
-        attr_names = list(attrs.keys())
-        for i in range(0, len(attr_names), 3):
-            chunk = attr_names[i:i+3]
-            line = ""
-            for attr in chunk:
-                val = f"{attrs[attr]:<3}"
-                line += f"{RED}{attr.capitalize():<13}{RESET}: {val}     "
-            print(f"{GREEN}│ {line:<77}  {GREEN}│{RESET}")
+    def get_final_attr(self):
+        modifiers = {}
+        for item in self.equipment.values():
+            for attr, val in item.modifiers.items():
+                modifiers[attr] = modifiers.get(attr, 0) + val
+        return self.attributes.get_final_attr(modifiers)
 
-        print(border_eq)
-        print(f"{GREEN}│{RESET} {RED}Head{RESET}        : {str(self.equipment.head or 'None'):<57}{GREEN}│{RESET}")
-        print(f"{GREEN}│{RESET} {RED}Main Hand{RESET}   : {str(self.equipment.main_hand or 'None'):<57}{GREEN}│{RESET}")
-        print(f"{GREEN}│{RESET} {RED}Off Hand{RESET}    : {str(self.equipment.off_hand or 'None'):<57}{GREEN}│{RESET}")
-        print(border_bottom)
+    def get_bonus_attr(self):
+        return self.attributes.get_bonus_attr()
 
+
+class Equipment:
+    def __init__(self, name: str, title: str, slot: str, modifiers: dict[str, int]):
+        self.name = name
+        self.title = title
+        self.slot = slot  # e.g., 'main_hand', 'head'
+        self.modifiers = modifiers or {}  # dict[str, int]
+
+    def __repr__(self):
+        return f"{self.name} ({self.title})"
 
 
 class Attributes:
     DEFAULT_SCORE = 8
 
-    def __init__(self, **kwargs):
-        for attr in ATTR_NAMES:
-            setattr(self, attr, kwargs.get(attr, self.DEFAULT_SCORE))
+    def __init__(self, base: dict):
+        self.values = {attr: base.get(attr, self.DEFAULT_SCORE) for attr in ATTR_NAMES}
 
     def to_dict(self):
-        return {attr: getattr(self, attr) for attr in ATTR_NAMES}
+        return self.values.copy()
+
+    def get_final_attr(self, modifiers: dict[str, int]):
+        return {
+            attr: self.values.get(attr, 0) + modifiers.get(attr, 0)
+            for attr in ATTR_NAMES
+        }
+
+    def get_bonus_attr(self):
+        return {
+            attr: (v - 10) // 2 if v > 10 else 0
+            for attr, v in self.values.items()
+        }
