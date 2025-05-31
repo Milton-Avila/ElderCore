@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Kharos",
+        "title": "O Vigilia sem Lamento",
+        "attributes": {
+            "strength": 12,
+            "dexterity": 14,
+            "constitution": 14,
+            "charisma": 13
+        }
+    },
+    {
+        "name": "Lia",
+        "title": "A Dançarina Mística",
+        "attributes": {
+            "strength": 10,
+            "dexterity": 16,
+            "constitution": 10,
+            "charisma": 14
+        }
+    }
+]
