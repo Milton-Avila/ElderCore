@@ -2,32 +2,51 @@
   {
     "name": "Kharos",
     "title": "O Vigilia sem Lamento",
+    "level": 1,
     "attributes": {
-        "strength": 12,
-        "dexterity": 14,
-        "constitution": 14,
-        "charisma": 13
+      "strength": 12,
+      "dexterity": 14,
+      "constitution": 14,
+      "charisma": 13
     },
     "equipment": [
-        {
-            "name": "Bavalack",
-            "title": "The Pact Blade",
-            "slot": "main_hand",
-            "modifiers": {
-            "dexterity": 1,
-            "constitution": 1
-            }
+      {
+        "name": "Bavalack",
+        "title": "A Lamina Demoníaca",
+        "slot": "main_hand",
+        "modifiers": {
+          "dexterity": 1,
+          "charisma": 1
         }
+      },
+      {
+        "name": "Adaga de Aparo",
+        "slot": "off_hand",
+        "modifiers": {
+          "dexterity": 1
+        }
+      }
     ]
   },
   {
     "name": "Lia",
     "title": "A Dançarina Mística",
+    "level": 1,
     "attributes": {
-        "strength": 10,
-        "dexterity": 16,
-        "constitution": 10,
-        "charisma": 14
-    }
+      "dexterity": 11,
+      "constitution": 10,
+      "charisma": 16
+    },
+    "equipment": [
+      {
+        "name": "Lilith Dourada",
+        "title": "A Coroa da Princesa",
+        "slot": "head",
+        "modifiers": {
+          "wisdom": 1,
+          "charisma": 1
+        }
+      }
+    ]
   }
 ]
