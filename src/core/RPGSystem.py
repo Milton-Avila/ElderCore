@@ -13,28 +13,28 @@ class RPGSystem:
         self._setup()
 
     def main_menu(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
         while True:
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print("\n=== Menu Principal ===")
-            print("1) Mostrar fichas")
-            print("2) Iniciar duelo")
+            print("\n=== Main Menu ===")
+            print("1) Show Characters")
+            print("2) Duel")
             print("q) Sair")
             opt = input("> ").lower()
 
             if opt == "1":
                 os.system('cls' if os.name == 'nt' else 'clear')
                 self.show_characters()
-                input("Pressione Enter para continuar...")
+                
 
             elif opt == "2":
-                simple_duel(self.characters[1], self.characters[0])
+                os.system('cls' if os.name == 'nt' else 'clear')
+                simple_duel(self.characters[0], self.characters[1])
 
             elif opt == "q":
-                print("Saindo…")
                 break
 
             else:
-                print("Opção inválida. Tente novamente.")
+                print("Invalid option, try again.")
 
         
     def show_characters(self):
@@ -59,17 +59,3 @@ class RPGSystem:
         # Se forem objetos gerados por to_dict(), talvez precise converter de volta.
         # Se forem objetos crus (mesmo formato de chars.json), basta usar Character(**data).
         self.characters = [Character(**char_data) for char_data in data]
-
-    
-if __name__ == '__main__':
-    system = RPGSystem()
-    system.main_menu()
-
-#     print(system.characters[0].to_dict())
-
-#     print("\nCharacter Final Attributes:")
-#     [print(char.get_final_attrs()) for char in self.characters]
-#     print("\nCharacter Bonus Attributes:")
-#     [print(char.get_bonus_attr()) for char in self.characters]
-#     print("\nCharacter Equipment Attribute Bonuses:")
-#     [print(char.get_equipment_attr_mod()) for char in self.characters]

@@ -9,7 +9,7 @@ RESET = '\033[0m'
 # Helper lambdas
 bio = lambda char: char.get_bio()
 base_attrs = lambda char: char.attributes.to_dict()
-bonuses = lambda char: char.get_equipment_attr_mod()
+bonuses = lambda char: char.get_equipment_mod()
 attr_names = lambda char: list(base_attrs(char).keys())
 
 # Line structure
@@ -48,8 +48,8 @@ def _render_character_lines(char):
 
     lines = [
         border_top(char),
-        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<34}   {RED}Max HP{RESET}       : {bio_data["hp_max"]:>2}     {GREEN}│{RESET}',
-        f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["hp_max"]-5:>2}{"":<4} {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<34}   {RED}Max HP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2}     {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["combat_stats"]["hp_max"]-5:>2}{"":<4} {GREEN}│{RESET}',
         border_section("Vital Status")
     ]
 

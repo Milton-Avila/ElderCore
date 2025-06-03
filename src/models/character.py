@@ -3,37 +3,48 @@ import json
 # Local
 from src.packages import ATTR_NAMES, EQUIPMENT_SLOTS
 from src.models.equipment import Equipment, EmptySlot
+from src.models.attributes import Attributes, CombatStats
 
 class Entity:
     def __init__(self, name: str, title: str, level: int, attributes: dict):
+        
         self.name = name
         self.title = title
         self.level = level
         self.attributes = Attributes(attributes)
-
-        self.hp_max = self._calc_hp_max()
-        self.hp_current = self.hp_max
-
-    def take_damage(self, amount: int):
-        self.hp_current = max(0, self.hp_current - amount)
-
-    def heal(self, amount: int):
-        self.hp_current = min(self.hp_max, self.hp_current + amount)
+        
+        attr = self.attributes.to_dict()
+        self.combat_stats = CombatStats(level, attr)
     
-    def get_attr(self, attr: str):
+    def get_attr(self, attr: str) -> int:
+        if attr not in ATTR_NAMES:
+            raise ValueError(f"Invalid attribute: {attr}")
         return self.attributes.values[attr]
     
-    def get_bonus_attr(self, attr: str):
+    def get_bonus_attr(self, attr: str) -> int:
+        if attr not in ATTR_NAMES:
+            raise ValueError(f"Invalid attribute: {attr}")
         return self.attributes.get_bonus_attrs().get(attr, 0)
 
-    def _calc_hp_max(self) -> tuple[int, int]:
-        const_mod = self.get_bonus_attr('constitution')
-        return 8 + const_mod + (5 + const_mod) * (self.level -1)
+    def is_alive(self):
+        return self.vitals.is_alive()
+
+    def take_damage(self, amount: int):
+        self.vitals.take_damage(amount)
+
+    def heal(self, amount: int):
+        self.vitals.heal(amount)
+
+    def spend_sp(self, amount: int):
+        self.vitals.spend_sp(amount)
+
+    def restore_sp(self, amount: int):
+        self.vitals.restore_sp(amount)
 
 class Character(Entity):
     def __init__(self, name: str, title: str, level: int, attributes: dict, equipment: list[dict] = []):
         super().__init__(name, title, level, attributes)
-
+        
         self.equipment = self._load_equipment(equipment)
         
     def get_bio(self):
@@ -41,8 +52,25 @@ class Character(Entity):
             'name': self.name,
             'level': self.level,
             'title': self.title,
-            'hp_max': self.hp_max
+            'combat_stats': self.combat_stats.to_dict()
         }
+    
+    def get_equipment(self, slot: str):
+        return self.equipment.get(slot, None)
+    
+    def get_equipment_mod(self):
+        modifiers = {}
+        for item in self.equipment.values():
+            for attr, val in item.get_modifiers().items():
+                modifiers[attr] = modifiers.get(attr, 0) + val
+        return modifiers
+
+    def get_final_attrs(self):
+        modifiers = self.get_equipment_mod()
+        return self.attributes.get_final_attrs(modifiers)
+
+    def get_bonus_attrs(self):
+        return self.attributes.get_bonus_attrs(self.get_equipment_mod())
 
     def equip(self, item_data: dict):
         name: str = item_data['name']
@@ -61,23 +89,32 @@ class Character(Entity):
         else:
             raise ValueError(f"Slot '{slot}' is already occupied by '{self.get_equipment(slot)}'.")
     
-    def get_equipment(self, slot: str):
-        return self.equipment.get(slot, None)
-    
-    def get_equipment_attr_mod(self):
-        modifiers = {}
-        for item in self.equipment.values():
-            for attr, val in item.get_modifiers().items():
-                modifiers[attr] = modifiers.get(attr, 0) + val
-        return modifiers
+    @staticmethod
+    def _load_equipment(equipment_data: list[dict]) -> dict[str, Equipment]:
+        equipment = {}
+        for item_data in equipment_data:
+            name = item_data['name']
+            title = item_data.get('title', '')
+            slot = item_data.get('slot', None)
+            modifiers = item_data.get('modifiers', {})
 
-    def get_final_attrs(self):
-        modifiers = self.get_equipment_attr_mod()
-        return self.attributes.get_final_attrs(modifiers)
+            if slot not in EQUIPMENT_SLOTS:
+                raise ValueError(f"Invalid equipment slot: {slot}")
 
-    def get_bonus_attrs(self):
-        return self.attributes.get_bonus_attrs(self.get_equipment_attr_mod())
-    
+            equipment[slot] = Equipment(
+                name=name,
+                title=title,
+                slot=slot,
+                modifiers=modifiers
+            )
+        
+        # Fill empty slots with EmptySlot instances
+        for slot in EQUIPMENT_SLOTS:
+            if slot not in equipment:
+                equipment[slot] = EmptySlot(slot)
+
+        return equipment
+
     @classmethod
     def from_jsonfile(cls, path: str) -> list['Character']:
         data = json.load(open(path, 'r', encoding='utf-8'))
@@ -107,58 +144,4 @@ class Character(Entity):
                 for slot, item in self.equipment.items()
                 if not isinstance(item, EmptySlot)
             ]
-        }
-
-    @staticmethod
-    def _load_equipment(equipment_data: list[dict]) -> dict[str, Equipment]:
-        equipment = {}
-        for item_data in equipment_data:
-            name = item_data['name']
-            title = item_data.get('title', '')
-            slot = item_data.get('slot', None)
-            modifiers = item_data.get('modifiers', {})
-
-            if slot not in EQUIPMENT_SLOTS:
-                raise ValueError(f"Invalid equipment slot: {slot}")
-
-            equipment[slot] = Equipment(
-                name=name,
-                title=title,
-                slot=slot,
-                modifiers=modifiers
-            )
-        
-        # Fill empty slots with EmptySlot instances
-        for slot in EQUIPMENT_SLOTS:
-            if slot not in equipment:
-                equipment[slot] = EmptySlot(slot)
-
-        return equipment
-
-class Attributes:
-    DEFAULT_SCORE = 8
-
-    def __init__(self, base: dict):
-        self.values = {attr: base.get(attr, self.DEFAULT_SCORE) for attr in ATTR_NAMES}
-
-    def to_dict(self):
-        return self.values.copy()
-
-    def get_final_attrs(self, modifiers: dict[str, int]):
-        return {
-            attr: self.values.get(attr, 0) + modifiers.get(attr, 0)
-            for attr in ATTR_NAMES
-        }
-
-    def get_bonus_attrs(self, equipment_modifiers: dict[str, int] = {}):
-        base_items = self.values.items()
-        if equipment_modifiers:
-            base_items = [
-                (attr, value + equipment_modifiers.get(attr, 0))
-                for attr, value in base_items
-            ]
-
-        return {
-            attr: (val - 10)//2
-            for attr, val in base_items
         }

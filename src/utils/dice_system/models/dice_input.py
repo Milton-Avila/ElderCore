@@ -23,16 +23,22 @@ class _DiceInfo:
     def _dice_str_interpreter(dice_str: str) -> tuple[list[dict[str, int]], int]:
         cleaned = dice_str.replace(" ", "")
 
-        # Garante que começa com + ou -
-        if not cleaned or cleaned[0] not in "+-":
+        if not cleaned:
+            raise InvalidDiceNotation(dice_str)
+
+        # Corrige sinais duplos, tipo "+-2" → "-2"
+        cleaned = re.sub(r'([+-])([+-])', lambda m: '-' if m.group(1) == m.group(2) else '+', cleaned)
+
+        # Garante que começa com sinal
+        if cleaned[0] not in "+-":
             cleaned = "+" + cleaned
 
-        # Validação completa antes de processar
+        # Valida com padrão ajustado
         valid_pattern = r'^([+-](\d+d\d+|\d+))+$'
         if not re.fullmatch(valid_pattern, cleaned):
             raise InvalidDiceNotation(dice_str)
 
-        # Tokeniza os blocos válidos
+        # Divide nos tokens (sinal + valor)
         tokens = re.findall(r'([+-])(\d+d\d+|\d+)', cleaned)
 
         dice_list = []
