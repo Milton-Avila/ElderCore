@@ -1,8 +1,8 @@
-from src.core.RPGSystem import RPGSystem
+from rpg.core.RPGSystem import RPGSystem
 
 def main():
     system = RPGSystem()
-    system.main_menu()
+    system.main()
 
 #     print("\nCharacter Final Attributes:")
 #     [print(char.get_final_attrs()) for char in self.characters]

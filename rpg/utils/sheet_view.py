@@ -1,5 +1,5 @@
-from src.models.character import Character
-from src.packages import EQUIPMENT_SLOTS
+from rpg.models.character import Character
+from rpg.packages import EQUIPMENT_SLOTS
 
 # Colors
 GREEN = '\033[92m'
@@ -7,9 +7,9 @@ RED = '\033[91m'
 RESET = '\033[0m'
 
 # Helper lambdas
-bio = lambda char: char.get_bio()
+bio = lambda char: char.bio
 base_attrs = lambda char: char.attributes.to_dict()
-bonuses = lambda char: char.get_equipment_mod()
+bonuses = lambda char: char.equipment_mod
 attr_names = lambda char: list(base_attrs(char).keys())
 
 # Line structure

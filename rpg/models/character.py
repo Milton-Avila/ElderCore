@@ -1,13 +1,13 @@
 import json
 
 # Local
-from src.packages import ATTR_NAMES, EQUIPMENT_SLOTS
-from src.models.equipment import Equipment, EmptySlot
-from src.models.attributes import Attributes, CombatStats
+from rpg.packages import ATTR_NAMES, EQUIPMENT_SLOTS
+from rpg.models.equipment import Equipment, EmptySlot
+from rpg.models.attributes import Attributes, CombatStats
 
 class Entity:
     def __init__(self, name: str, title: str, level: int, attributes: dict):
-        
+
         self.name = name
         self.title = title
         self.level = level
@@ -15,6 +15,22 @@ class Entity:
         
         attr = self.attributes.to_dict()
         self.combat_stats = CombatStats(level, attr)
+
+    @property
+    def alive(self):
+        return self.combat_stats.is_alive()
+    
+    @property
+    def hp_max(self):
+        return self.combat_stats.hp_max
+    
+    @property
+    def hp_current(self):
+        return self.combat_stats.hp_current
+    
+    @property
+    def ac(self):
+        return self.combat_stats.ac
     
     def get_attr(self, attr: str) -> int:
         if attr not in ATTR_NAMES:
@@ -26,28 +42,26 @@ class Entity:
             raise ValueError(f"Invalid attribute: {attr}")
         return self.attributes.get_bonus_attrs().get(attr, 0)
 
-    def is_alive(self):
-        return self.vitals.is_alive()
-
     def take_damage(self, amount: int):
-        self.vitals.take_damage(amount)
+        self.combat_stats.take_damage(amount)
 
     def heal(self, amount: int):
-        self.vitals.heal(amount)
+        self.combat_stats.heal(amount)
 
     def spend_sp(self, amount: int):
-        self.vitals.spend_sp(amount)
+        self.combat_stats.spend_sp(amount)
 
     def restore_sp(self, amount: int):
-        self.vitals.restore_sp(amount)
+        self.combat_stats.restore_sp(amount)
 
 class Character(Entity):
     def __init__(self, name: str, title: str, level: int, attributes: dict, equipment: list[dict] = []):
-        super().__init__(name, title, level, attributes)
         
+        super().__init__(name, title, level, attributes)
         self.equipment = self._load_equipment(equipment)
         
-    def get_bio(self):
+    @property
+    def bio(self):
         return {
             'name': self.name,
             'level': self.level,
@@ -55,33 +69,55 @@ class Character(Entity):
             'combat_stats': self.combat_stats.to_dict()
         }
     
-    def get_equipment(self, slot: str):
-        return self.equipment.get(slot, None)
+    @property
+    def sp_max(self):
+        return self.combat_stats.sp_max
     
-    def get_equipment_mod(self):
+    @property
+    def sp_current(self):
+        return self.combat_stats.sp_current
+    
+    @property
+    def equipment_mod(self):
         modifiers = {}
         for item in self.equipment.values():
             for attr, val in item.get_modifiers().items():
                 modifiers[attr] = modifiers.get(attr, 0) + val
         return modifiers
+    
+    @property
+    def base_dmg(self) -> str:
+        weapon = self.get_equipment('main_hand')
+        if not weapon or isinstance(weapon, EmptySlot):
+            weapon = self.get_equipment('off_hand')
+        if weapon:
+            return weapon.get_base_dmg()
+        return '1d4'
 
-    def get_final_attrs(self):
-        modifiers = self.get_equipment_mod()
+    @property
+    def final_attrs(self):
+        modifiers = self.equipment_mod
         return self.attributes.get_final_attrs(modifiers)
 
-    def get_bonus_attrs(self):
-        return self.attributes.get_bonus_attrs(self.get_equipment_mod())
+    @property
+    def bonus_attrs(self):
+        return self.attributes.get_bonus_attrs(self.equipment_mod)
+    
+    def get_equipment(self, slot: str):
+        return self.equipment.get(slot, None)
 
     def equip(self, item_data: dict):
         name: str = item_data['name']
         title: str = item_data.get('title', '')
-        modifiers = item_data.get('modifiers', {})
+        base_dmg = item_data.get('base_dmg', '1d4')
         slot = item_data.get('slot', None)
+        modifiers = item_data.get('modifiers', {})
 
         if isinstance(self.equipment.get(slot), EmptySlot):
             self.equipment[slot] = Equipment(
                 name=name,
                 title=title,
+                base_dmg=base_dmg,
                 slot=slot,
                 modifiers=modifiers
             )

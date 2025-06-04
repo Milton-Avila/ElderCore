@@ -1,4 +1,4 @@
-from src.packages import ATTR_NAMES
+from rpg.packages import ATTR_NAMES
 
 class Attributes:
     DEFAULT_SCORE = 8

@@ -13,6 +13,7 @@
       {
         "name": "Bavalack",
         "title": "A Lamina Demoníaca",
+        "base_dmg": "1d10",
         "slot": "main_hand",
         "modifiers": {
           "dexterity": 1,
@@ -21,6 +22,7 @@
       },
       {
         "name": "Adaga de Aparo",
+        "base_dmg": "1d6",
         "slot": "off_hand",
         "modifiers": {
           "dexterity": 1
