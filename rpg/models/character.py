@@ -90,9 +90,8 @@ class Character(Entity):
         weapon = self.get_equipment('main_hand')
         if not weapon or isinstance(weapon, EmptySlot):
             weapon = self.get_equipment('off_hand')
-        if weapon:
-            return weapon.get_base_dmg()
-        return '1d4'
+
+        return weapon.get_base_dmg()
 
     @property
     def final_attrs(self):
@@ -107,42 +106,22 @@ class Character(Entity):
         return self.equipment.get(slot, None)
 
     def equip(self, item_data: dict):
-        name: str = item_data['name']
-        title: str = item_data.get('title', '')
-        base_dmg = item_data.get('base_dmg', '1d4')
         slot = item_data.get('slot', None)
-        modifiers = item_data.get('modifiers', {})
 
         if isinstance(self.equipment.get(slot), EmptySlot):
             self.equipment[slot] = Equipment(
-                name=name,
-                title=title,
-                base_dmg=base_dmg,
-                slot=slot,
-                modifiers=modifiers
+                self.load_item(item_data)
             )
             return
         else:
             raise ValueError(f"Slot '{slot}' is already occupied by '{self.get_equipment(slot)}'.")
     
-    @staticmethod
-    def _load_equipment(equipment_data: list[dict]) -> dict[str, Equipment]:
+    @classmethod
+    def _load_equipment(cls, equipment_data: list[dict]) -> dict[str, Equipment]:
         equipment = {}
+        
         for item_data in equipment_data:
-            name = item_data['name']
-            title = item_data.get('title', '')
-            slot = item_data.get('slot', None)
-            modifiers = item_data.get('modifiers', {})
-
-            if slot not in EQUIPMENT_SLOTS:
-                raise ValueError(f"Invalid equipment slot: {slot}")
-
-            equipment[slot] = Equipment(
-                name=name,
-                title=title,
-                slot=slot,
-                modifiers=modifiers
-            )
+            equipment[item_data['slot']] = cls.load_item(item_data)
         
         # Fill empty slots with EmptySlot instances
         for slot in EQUIPMENT_SLOTS:
@@ -150,6 +129,27 @@ class Character(Entity):
                 equipment[slot] = EmptySlot(slot)
 
         return equipment
+    
+    @classmethod
+    def load_item(cls, item_data: dict):
+        name = item_data['name']
+        title = item_data.get('title', '')
+        slot = item_data.get('slot', None)
+        base_dmg = item_data.get('base_dmg', 0)
+        dmg_type = item_data.get('dmg_type', 'bludgeoning')
+        modifiers = item_data.get('modifiers', {})
+        
+        if slot not in EQUIPMENT_SLOTS:
+            raise ValueError(f"Invalid equipment slot: {slot}")
+
+        return Equipment(
+            name=name,
+            title=title,
+            base_dmg=base_dmg,
+            dmg_type=dmg_type,
+            slot=slot,
+            modifiers=modifiers
+        )
 
     @classmethod
     def from_jsonfile(cls, path: str) -> list['Character']:

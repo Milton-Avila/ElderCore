@@ -14,6 +14,7 @@
         "name": "Bavalack",
         "title": "A Lamina Demoníaca",
         "base_dmg": "1d10",
+        "dmg_type": "slashing",
         "slot": "main_hand",
         "modifiers": {
           "dexterity": 1,
@@ -23,6 +24,7 @@
       {
         "name": "Adaga de Aparo",
         "base_dmg": "1d6",
+        "dmg_type": "piercing",
         "slot": "off_hand",
         "modifiers": {
           "dexterity": 1
@@ -49,6 +51,18 @@
           "charisma": 1
         }
       }
+    ]
+  },
+  {
+    "name": "Lunasha",
+    "title": "A Besta Maldita",
+    "level": 1,
+    "attributes": {
+      "strength": 16,
+      "dexterity": 12,
+      "constitution": 16
+    },
+    "equipment": [
     ]
   }
 ]

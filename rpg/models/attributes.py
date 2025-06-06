@@ -37,9 +37,6 @@ class CombatStats:
         self.hp_max = self._calc_hp_max(level, attr)
         self.hp_current = self.hp_max
 
-        self.sp_max = self._calc_sp_max(level, attr)
-        self.sp_current = self.sp_max
-
         self.ac = self._calc_ac(attr)
         
     def is_alive(self) -> bool:
@@ -58,19 +55,6 @@ class CombatStats:
 
     def restore_sp(self, amount: int):
         self.sp_current = min(self.sp_max, self.sp_current + amount)
-
-    def _calc_hp_max(self, level: int, attr: dict[str, int]) -> int:
-        const_mod = attr['constitution']
-        return 8 + const_mod + (5 + const_mod) * (level -1)
-
-    def _calc_sp_max(self, level: int, attr: dict[str, int]) -> dict[int, int]:
-        # Change to class depending later
-        inte_mod = attr['intelligence']
-        wisd_mod = attr['wisdom']
-        char_mod = attr['charisma']
-        sp_mod = max(inte_mod, wisd_mod, char_mod)
-        
-        return 5 + sp_mod + (3 + sp_mod) * (level - 1)
     
     def _calc_ac(self, attr: dict[str, int]) -> int:
         dex_mod = attr['dexterity']
