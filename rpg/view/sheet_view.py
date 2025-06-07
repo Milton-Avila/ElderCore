@@ -9,11 +9,11 @@ RESET = '\033[0m'
 # Helper lambdas
 bio = lambda char: char.bio
 base_attrs = lambda char: char.attributes.to_dict()
-bonuses = lambda char: char.equipment_mod
+bonuses = lambda char: {} # Nothing for now
 attr_names = lambda char: list(base_attrs(char).keys())
 
 # Line structure
-line_len = 75
+line_len = 72
 
 def border_top(char):
     return GREEN + '┌' + f" {bio(char)['title']} ".center(line_len, '─') + '┐' + RESET
@@ -29,16 +29,16 @@ def format_attr_line(attr_chunk, base, bonus):
     for i, attr in enumerate(attr_chunk):
         base_val = base[attr]
         bonus_val = bonus.get(attr, 0)
-        bonus_str = f'(+{bonus_val})' if bonus_val > 0 else '    '
+        bonus_str = f'(+{bonus_val})' if bonus_val > 0 else ''
         line += f'{RED}{attr.capitalize():<13}{RESET}: {base_val:>2}{bonus_str}'
         if i < len(attr_chunk) - 1:
-            line += '     '
-    return f'{GREEN}│ {line:<{line_len}} {GREEN}│{RESET}'
+            line += '         '
+    return f'{GREEN}│ {line:<{line_len}}  {GREEN}│{RESET}'
 
 def render_equipment_line(slot, item):
     label = slot.replace("_", " ").title()
     name = str(item) if item else 'None'
-    return f'{GREEN}│{RESET} {RED}{label:<13}{RESET}: {name:<59}{GREEN}│{RESET}'
+    return f'{GREEN}│{RESET} {RED}{label:<13}{RESET}: {name:<56}{GREEN}│{RESET}'
 
 def _render_character_lines(char):
     bio_data = bio(char)
@@ -48,8 +48,8 @@ def _render_character_lines(char):
 
     lines = [
         border_top(char),
-        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<34}   {RED}Max HP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2}     {GREEN}│{RESET}',
-        f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["combat_stats"]["hp_max"]-5:>2}{"":<4} {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<34}   {RED}Max HP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2}  {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2}  {GREEN}│{RESET}',
         border_section("Vital Status")
     ]
 

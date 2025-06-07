@@ -1,43 +1,14 @@
+from rpg.packages import DEFAILT_AC, DEFAULT_ATTR_SCORE
 from rpg.packages import ATTR_NAMES
 
-class Attributes:
-    DEFAULT_SCORE = 8
-
-    def __init__(self, base: dict):
-        self.values = {attr: base.get(attr, self.DEFAULT_SCORE) for attr in ATTR_NAMES}
-
-    def get_final_attrs(self, modifiers: dict[str, int]):
-        return {
-            attr: self.values.get(attr, 0) + modifiers.get(attr, 0)
-            for attr in ATTR_NAMES
-        }
-
-    def get_bonus_attrs(self, equipment_modifiers: dict[str, int] = {}):
-        base_items = self.values.items()
-        if equipment_modifiers:
-            base_items = [
-                (attr, value + equipment_modifiers.get(attr, 0))
-                for attr, value in base_items
-            ]
-
-        return {
-            attr: (val - 10)//2
-            for attr, val in base_items
-        }
-
-    def to_dict(self):
-        return self.values.copy()
-
 class CombatStats:
-    def __init__(self, level: int, attr: dict[str, int]):
-        self.update_stats(level, attr)
+    def __init__(self, level: int, attrs: dict[str, int], base_hp: int):
+        self.update_stats(level, attrs, base_hp)
 
-    def update_stats(self, level: int, attr: dict[str, int]):
-
-        self.hp_max = self._calc_hp_max(level, attr)
+    def update_stats(self, level: int, attrs: dict[str, int], base_hp: int) -> None:
+        self.hp_max = self._calc_hp_max(level, attrs, base_hp)
         self.hp_current = self.hp_max
-
-        self.ac = self._calc_ac(attr)
+        self.ac = self._calc_ac(attrs)
         
     def is_alive(self) -> bool:
         return self.hp_current > 0
@@ -50,21 +21,32 @@ class CombatStats:
         if amount > 0:
             self.hp_current = min(self.hp_max, self.hp_current + amount)
 
-    def spend_sp(self, amount: int):
-        self.sp_current = max(0, self.sp_current - amount)
-
-    def restore_sp(self, amount: int):
-        self.sp_current = min(self.sp_max, self.sp_current + amount)
+    def _calc_hp_max(self, level: int, attrs: dict[str, int], base_hp: int) -> int:
+        const_mod = self._get_mod(attrs['constitution'])
+        bonus_hp_level = base_hp // 2
+        return base_hp + const_mod + (bonus_hp_level + const_mod) * (level -1)
+        
+    def _calc_ac(self, attrs: dict[str, int]) -> int:
+        dex_mod = self._get_mod(attrs['dexterity'])
+        con_mod = self._get_mod(attrs['constitution'])
+        return DEFAILT_AC + dex_mod + con_mod
     
-    def _calc_ac(self, attr: dict[str, int]) -> int:
-        dex_mod = attr['dexterity']
-        return 10 + dex_mod
+    def _get_mod(self, val: int) -> int:
+        return (val -10) // 2
 
     def to_dict(self) -> dict:
         return {
-            "hp_current": self.hp_current,
             "hp_max": self.hp_max,
-            "sp_current": self.sp_current,
-            "sp_max": self.sp_max,
+            "hp_current": self.hp_current,
             "ac": self.ac
         }
+
+class Attributes:
+    def __init__(self, base: dict):
+        self.values: dict[str, int] = {attr: base.get(attr, DEFAULT_ATTR_SCORE) for attr in ATTR_NAMES}
+
+    def get_attr_bonus(self) -> dict[str, int]:
+        return {attr: (val -10) // 2 for attr, val in self.values.items()}
+
+    def to_dict(self) -> dict[str, int]:
+        return self.values.copy()

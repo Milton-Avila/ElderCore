@@ -1,35 +1,65 @@
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
 class Equipment:
-    def __init__(self, name: str, title: str, slot: str, base_dmg: str, dmg_type: str, modifiers: dict[str, int] = {}):
-        self.name = name
-        self.title = title
-        self.slot = slot    # ex: 'main_hand', 'head'
-        self.base_dmg = base_dmg
-        self.dmg_type = dmg_type
-        self.modifiers = modifiers
-
-    def get_base_dmg(self) -> str:
-        return self.base_dmg
-
-    def get_modifiers(self):
-        return self.modifiers.copy()
+    name: str
+    title: str
+    _slot: str
+    _base_dmg: str
+    _dmg_type: str
+    _proficience_mod: str
     
-    def to_dict(self):
-        return {
+    @property
+    def slot(self) -> str:
+        return self._slot
+
+    @property
+    def base_dmg(self) -> str:
+        return self._base_dmg
+    
+    @property
+    def dmg_type(self) -> str:
+        return self._dmg_type
+    
+    @property
+    def proficience_mod(self) -> str:
+        return self._proficience_mod
+    
+    def asdict(self) -> dict:
+        item = {
             'name': self.name,
-            'title': self.title,
-            'base_dmg': self.base_dmg,
-            'slot': self.slot,
-            'modifiers': self.modifiers
         }
+
+        if self.title:
+            item['title'] = self.title
+
+        item['slot'] = self.slot
+
+        if self.slot != 'head':
+            item['base_dmg'] = self.base_dmg
+            item['proficience_mod'] = self.proficience_mod
+            item['dmg_type'] = self.dmg_type
+
+        return item
 
     def __repr__(self):
         return f'{self.name}{f' ({self.title})' if self.title else ''}'
 
+@dataclass(frozen=True)
 class EmptySlot(Equipment):
     def __init__(self, slot: str):
-        base_dmg = '1d2' if slot in ['main_hand', 'off_hand'] else '0'
-        super().__init__(name='Nothing', title='', base_dmg=base_dmg, dmg_type='bludgeoning', slot=slot, modifiers={})
+        base_dmg = '1d2' if slot != 'head' else ''
+        dmg_type = 'bludgeoning' if slot != 'head' else ''
+
+        super().__init__(
+            'Nothing',
+            '',
+            slot,
+            base_dmg,
+            dmg_type,
+            "strength",
+        )
 
     def __repr__(self):
-        # Pode exibir “None (Empty)” ou apenas “None”
         return 'Nothing'

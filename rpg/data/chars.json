@@ -1,55 +1,39 @@
 [
   {
     "name": "Kharos",
-    "title": "O Vigilia sem Lamento",
+    "title": "O Vigilia Carmesin",
     "level": 1,
     "attributes": {
       "strength": 12,
-      "dexterity": 14,
+      "dexterity": 17,
       "constitution": 14,
-      "charisma": 13
+      "charisma": 12
     },
     "equipment": [
       {
         "name": "Bavalack",
         "title": "A Lamina Demoníaca",
-        "base_dmg": "1d10",
-        "dmg_type": "slashing",
         "slot": "main_hand",
-        "modifiers": {
-          "dexterity": 1,
-          "charisma": 1
-        }
-      },
-      {
-        "name": "Adaga de Aparo",
-        "base_dmg": "1d6",
-        "dmg_type": "piercing",
-        "slot": "off_hand",
-        "modifiers": {
-          "dexterity": 1
-        }
+        "base_dmg": "1d8",
+        "proficience_mod": "dexterity",
+        "dmg_type": "slashing"
       }
     ]
   },
   {
-    "name": "Lia",
+    "name": "Myra",
     "title": "A Dançarina Mística",
     "level": 1,
     "attributes": {
-      "dexterity": 11,
-      "constitution": 10,
-      "charisma": 16
+      "dexterity": 16,
+      "constitution": 13,
+      "charisma": 17
     },
     "equipment": [
       {
         "name": "Lilith Dourada",
-        "title": "A Coroa da Princesa",
-        "slot": "head",
-        "modifiers": {
-          "wisdom": 1,
-          "charisma": 1
-        }
+        "title": "A Tiara da Princesa",
+        "slot": "head"
       }
     ]
   },
@@ -58,11 +42,10 @@
     "title": "A Besta Maldita",
     "level": 1,
     "attributes": {
-      "strength": 16,
-      "dexterity": 12,
+      "strength": 17,
+      "dexterity": 13,
       "constitution": 16
     },
-    "equipment": [
-    ]
+    "equipment": []
   }
 ]

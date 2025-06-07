@@ -1,116 +1,50 @@
 import json
 
 # Local
-from rpg.packages import ATTR_NAMES, EQUIPMENT_SLOTS
+from rpg.packages import EQUIPMENT_SLOTS
 from rpg.models.equipment import Equipment, EmptySlot
-from rpg.models.attributes import Attributes, CombatStats
-
-class Entity:
-    def __init__(self, name: str, title: str, level: int, attributes: dict):
-
-        self.name = name
-        self.title = title
-        self.level = level
-        self.attributes = Attributes(attributes)
-        
-        attr = self.attributes.to_dict()
-        self.combat_stats = CombatStats(level, attr)
-
-    @property
-    def alive(self):
-        return self.combat_stats.is_alive()
-    
-    @property
-    def hp_max(self):
-        return self.combat_stats.hp_max
-    
-    @property
-    def hp_current(self):
-        return self.combat_stats.hp_current
-    
-    @property
-    def ac(self):
-        return self.combat_stats.ac
-    
-    def get_attr(self, attr: str) -> int:
-        if attr not in ATTR_NAMES:
-            raise ValueError(f"Invalid attribute: {attr}")
-        return self.attributes.values[attr]
-    
-    def get_bonus_attr(self, attr: str) -> int:
-        if attr not in ATTR_NAMES:
-            raise ValueError(f"Invalid attribute: {attr}")
-        return self.attributes.get_bonus_attrs().get(attr, 0)
-
-    def take_damage(self, amount: int):
-        self.combat_stats.take_damage(amount)
-
-    def heal(self, amount: int):
-        self.combat_stats.heal(amount)
-
-    def spend_sp(self, amount: int):
-        self.combat_stats.spend_sp(amount)
-
-    def restore_sp(self, amount: int):
-        self.combat_stats.restore_sp(amount)
+from rpg.models.entity import Entity
 
 class Character(Entity):
-    def __init__(self, name: str, title: str, level: int, attributes: dict, equipment: list[dict] = []):
-        
-        super().__init__(name, title, level, attributes)
+    def __init__(self, name: str, title: str, level: int, attributes: dict, base_hp: int, equipment: list[dict] = []):
+        super().__init__(name, title, level, attributes, base_hp)
         self.equipment = self._load_equipment(equipment)
         
     @property
-    def bio(self):
+    def bio(self) -> dict[str, str | int]:
         return {
             'name': self.name,
             'level': self.level,
             'title': self.title,
-            'combat_stats': self.combat_stats.to_dict()
+            'combat_stats': self._combat_stats.to_dict()
         }
     
     @property
-    def sp_max(self):
-        return self.combat_stats.sp_max
+    def main_weapon(self) -> Equipment:
+        for slot in ("main_hand", "off_hand"):
+            item = self.equipment.get(slot)
+            if item and not isinstance(item, EmptySlot):
+                return item
+        return item
     
     @property
-    def sp_current(self):
-        return self.combat_stats.sp_current
-    
-    @property
-    def equipment_mod(self):
-        modifiers = {}
-        for item in self.equipment.values():
-            for attr, val in item.get_modifiers().items():
-                modifiers[attr] = modifiers.get(attr, 0) + val
-        return modifiers
-    
-    @property
-    def base_dmg(self) -> str:
+    def prof_bonus(self) -> str:
         weapon = self.get_equipment('main_hand')
         if not weapon or isinstance(weapon, EmptySlot):
             weapon = self.get_equipment('off_hand')
 
-        return weapon.get_base_dmg()
-
-    @property
-    def final_attrs(self):
-        modifiers = self.equipment_mod
-        return self.attributes.get_final_attrs(modifiers)
-
-    @property
-    def bonus_attrs(self):
-        return self.attributes.get_bonus_attrs(self.equipment_mod)
+        proficience_mod = weapon.proficience_mod
+        return self.get_attr_bonus(proficience_mod)
     
-    def get_equipment(self, slot: str):
-        return self.equipment.get(slot, None)
+    def get_equipment(self, slot: str) -> Equipment | EmptySlot:
+        return self.equipment.get(slot, EmptySlot)
 
     def equip(self, item_data: dict):
         slot = item_data.get('slot', None)
 
         if isinstance(self.equipment.get(slot), EmptySlot):
             self.equipment[slot] = Equipment(
-                self.load_item(item_data)
+                self._load_item(item_data)
             )
             return
         else:
@@ -121,7 +55,7 @@ class Character(Entity):
         equipment = {}
         
         for item_data in equipment_data:
-            equipment[item_data['slot']] = cls.load_item(item_data)
+            equipment[item_data['slot']] = cls._load_item(item_data)
         
         # Fill empty slots with EmptySlot instances
         for slot in EQUIPMENT_SLOTS:
@@ -131,24 +65,24 @@ class Character(Entity):
         return equipment
     
     @classmethod
-    def load_item(cls, item_data: dict):
+    def _load_item(cls, item_data: dict) -> Equipment:
         name = item_data['name']
         title = item_data.get('title', '')
         slot = item_data.get('slot', None)
         base_dmg = item_data.get('base_dmg', 0)
         dmg_type = item_data.get('dmg_type', 'bludgeoning')
-        modifiers = item_data.get('modifiers', {})
+        proficience_mod = item_data.get('proficience_mod', 'strength')
         
         if slot not in EQUIPMENT_SLOTS:
             raise ValueError(f"Invalid equipment slot: {slot}")
 
         return Equipment(
-            name=name,
-            title=title,
-            base_dmg=base_dmg,
-            dmg_type=dmg_type,
-            slot=slot,
-            modifiers=modifiers
+            name,
+            title,
+            slot,
+            base_dmg,
+            dmg_type,
+            proficience_mod
         )
 
     @classmethod
@@ -156,7 +90,7 @@ class Character(Entity):
         data = json.load(open(path, 'r', encoding='utf-8'))
         return [cls(**char_data) for char_data in data]
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, str | int | dict | list[dict]]:
         return {
             'name': self.name,
             'title': self.title,
@@ -167,16 +101,7 @@ class Character(Entity):
                 if val != 8
             },
             'equipment': [
-                {
-                    'name': item.name,
-                    'title': item.title,
-                    'slot': item.slot,
-                    'modifiers': item.get_modifiers()
-                } if item.title else {
-                    'name': item.name,
-                    'slot': item.slot,
-                    'modifiers': item.get_modifiers()
-                }
+                item.asdict()
                 for slot, item in self.equipment.items()
                 if not isinstance(item, EmptySlot)
             ]
