@@ -13,7 +13,7 @@ bonuses = lambda char: {} # Nothing for now
 attr_names = lambda char: list(base_attrs(char).keys())
 
 # Line structure
-line_len = 72
+line_len = 71
 
 def border_top(char):
     return GREEN + '┌' + f" {bio(char)['title']} ".center(line_len, '─') + '┐' + RESET
@@ -33,12 +33,12 @@ def format_attr_line(attr_chunk, base, bonus):
         line += f'{RED}{attr.capitalize():<13}{RESET}: {base_val:>2}{bonus_str}'
         if i < len(attr_chunk) - 1:
             line += '         '
-    return f'{GREEN}│ {line:<{line_len}}  {GREEN}│{RESET}'
+    return f'{GREEN}│ {line:<{line_len}} {GREEN}│{RESET}'
 
 def render_equipment_line(slot, item):
     label = slot.replace("_", " ").title()
     name = str(item) if item else 'None'
-    return f'{GREEN}│{RESET} {RED}{label:<13}{RESET}: {name:<56}{GREEN}│{RESET}'
+    return f'{GREEN}│{RESET} {RED}{label:<13}{RESET}: {name:<55}{GREEN}│{RESET}'
 
 def _render_character_lines(char):
     bio_data = bio(char)
@@ -48,8 +48,8 @@ def _render_character_lines(char):
 
     lines = [
         border_top(char),
-        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<34}   {RED}Max HP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2}  {GREEN}│{RESET}',
-        f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2}  {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<34}   {RED}Max HP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2} {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2} {GREEN}│{RESET}',
         border_section("Vital Status")
     ]
 
@@ -72,7 +72,7 @@ def _display_horizontal(char_list: list[Character]):
     sheets = [_render_character_lines(char) for char in char_list]
     max_lines = max(len(sheet) for sheet in sheets)
     width = line_len + 2
-    spacer = ' ' * 5
+    spacer = ' ' * 4
 
     # Normalize
     for sheet in sheets:

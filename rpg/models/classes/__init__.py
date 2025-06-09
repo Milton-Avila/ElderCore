@@ -1,3 +1,3 @@
 from .duelist import Duelist
 from .werebeast import Werebeast
-from .bard import Bard
+from .sorcerer import Sorcerer

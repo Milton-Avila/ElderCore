@@ -1,3 +1,5 @@
 CHARS_DATA_PATH = "rpg/data/chars.json"
-SHOW_SHEETS = True
-HORIZONTRAL_SHEET_VIEW = True
+SETTINGS = {
+    'show_sheets': True,
+    'horizontal_view': True
+}

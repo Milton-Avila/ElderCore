@@ -1,65 +1,42 @@
 from dataclasses import dataclass
+from random import randint
 
 
 @dataclass(frozen=True)
 class Equipment:
     name: str
     title: str
-    _slot: str
-    _base_dmg: str
-    _dmg_type: str
-    _proficience_mod: str
-    
-    @property
-    def slot(self) -> str:
-        return self._slot
+    slot: str
+    base_dmg: int = 0
+    dmg_type: str = "bludgeoning"
+    proficience_mod: str = "strength"
 
-    @property
-    def base_dmg(self) -> str:
-        return self._base_dmg
-    
-    @property
-    def dmg_type(self) -> str:
-        return self._dmg_type
-    
-    @property
-    def proficience_mod(self) -> str:
-        return self._proficience_mod
-    
+    def is_weapon(self) -> bool:
+        return self.slot in ("main_hand", "off_hand")
+
+    def damage_roll(self) -> int:
+        """Return randomized damage with ±20% variance"""
+        variance = int(self.base_dmg * 0.2)
+        return randint(self.base_dmg - variance, self.base_dmg + variance)
+
     def asdict(self) -> dict:
         item = {
-            'name': self.name,
+            "name": self.name,
+            "slot": self.slot,
         }
-
         if self.title:
-            item['title'] = self.title
-
-        item['slot'] = self.slot
-
-        if self.slot != 'head':
-            item['base_dmg'] = self.base_dmg
-            item['proficience_mod'] = self.proficience_mod
-            item['dmg_type'] = self.dmg_type
-
+            item["title"] = self.title
+        if self.is_weapon():
+            item.update({
+                "base_dmg": self.base_dmg,
+                "dmg_type": self.dmg_type,
+                "proficience_mod": self.proficience_mod,
+            })
         return item
 
     def __repr__(self):
-        return f'{self.name}{f' ({self.title})' if self.title else ''}'
+        return f"{self.name}{f' ({self.title})' if self.title else ''}"
 
-@dataclass(frozen=True)
-class EmptySlot(Equipment):
-    def __init__(self, slot: str):
-        base_dmg = '1d2' if slot != 'head' else ''
-        dmg_type = 'bludgeoning' if slot != 'head' else ''
 
-        super().__init__(
-            'Nothing',
-            '',
-            slot,
-            base_dmg,
-            dmg_type,
-            "strength",
-        )
-
-    def __repr__(self):
-        return 'Nothing'
+# Singleton vazio
+EMPTY_SLOT = Equipment(name="Nothing", title="", slot="none", base_dmg=0, dmg_type="", proficience_mod="")

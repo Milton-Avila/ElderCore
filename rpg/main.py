@@ -1,12 +1,5 @@
-from rpg.core.RPGSystem import RPGSystem
+from rpg.core.ElderCore import ElderCore
 
 def main():
-    system = RPGSystem()
-    system.main()
-
-#     print("\nCharacter Final Attributes:")
-#     [print(char.get_final_attrs()) for char in self.characters]
-#     print("\nCharacter Bonus Attributes:")
-#     [print(char.get_bonus_attr()) for char in self.characters]
-#     print("\nCharacter Equipment Attribute Bonuses:")
-#     [print(char.get_equipment_mod()) for char in self.characters]
+    elder_core = ElderCore()
+    elder_core.main()

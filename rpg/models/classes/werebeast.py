@@ -1,5 +1,5 @@
 from rpg.models.character import Character
-from rpg.models.equipment import EmptySlot, Equipment
+from rpg.models.equipment import Equipment, EMPTY_SLOT
 
 class Werebeast(Character):
     BASE_HP = 12
@@ -20,6 +20,6 @@ class Werebeast(Character):
         # prioriza main_hand, depois off_hand, depois natural
         for slot in ('main_hand', 'off_hand'):
             item = self.equipment.get(slot)
-            if item and not isinstance(item, EmptySlot):
+            if item and item != EMPTY_SLOT:
                 return item
         return self.natural_weapon
