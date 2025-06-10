@@ -1,7 +1,9 @@
 from rpg.combat.turn_processor import TurnProcessor
+from rpg.models.character import Character
+from rpg.models.entity import Entity
 
 class CombatLoop:
-    def __init__(self, allies, enemies):
+    def __init__(self, allies: list[Character], enemies: list[Entity]):
         self.allies = allies
         self.enemies = enemies
         self.turn_order = self._define_turn_order()
@@ -17,3 +19,6 @@ class CombatLoop:
 
     def _check_end_condition(self):
         return all(a.hp <= 0 for a in self.allies) or all(e.hp <= 0 for e in self.enemies)
+
+    def _define_turn_order(self) -> list[Entity]:
+        return sorted(self.allies + self.enemies, key=lambda x: x.initiative, reverse=True)

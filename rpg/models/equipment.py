@@ -7,7 +7,7 @@ class Equipment:
     name: str
     title: str
     slot: str
-    base_dmg: int = 0
+    base_dmg: int = 1
     dmg_type: str = "bludgeoning"
     proficience_mod: str = "strength"
 
@@ -39,4 +39,4 @@ class Equipment:
 
 
 # Singleton vazio
-EMPTY_SLOT = Equipment(name="Nothing", title="", slot="none", base_dmg=0, dmg_type="", proficience_mod="")
+EMPTY_SLOT = Equipment(name="Nothing", title="", slot="none", base_dmg=0, dmg_type="", proficience_mod="strength")

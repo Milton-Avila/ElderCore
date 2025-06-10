@@ -80,10 +80,7 @@ class ElderCore:
         self.message = message
 
     def _duel(self):
-        if len(self.characters) < 2:
-            self._set_message('Not enough characters to duel.')
-            return
-        self.combat_controller.duel(self.characters[0], self.characters[1])
+        self.combat_controller.duel([self.characters[0], self.characters[1]], [self.characters[2]])
 
     def _options_menu(self):
         while True:

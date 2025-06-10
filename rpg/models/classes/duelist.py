@@ -5,4 +5,3 @@ class Duelist(Character):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs, base_hp=self.BASE_HP)
-        

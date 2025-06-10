@@ -1,11 +1,11 @@
 class StatusEffect:
-    def apply(self, entity: 'Entity'):
+    def apply(self, entity):
         pass
 
-    def on_turn_start(self, entity: 'Entity'):
+    def on_turn_start(self, entity):
         pass
 
-    def on_turn_end(self, entity: 'Entity'):
+    def on_turn_end(self, entity):
         pass
 
 class BleedingEffect(StatusEffect):
