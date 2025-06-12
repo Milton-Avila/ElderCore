@@ -10,7 +10,7 @@ class Werebeast(Character):
             'Bestial Claws',
             '',
             'natural',
-            '1d8',
+            6,
             'slashing',
             'strength'
         )

@@ -5,7 +5,15 @@ from rpg.models.entity import Entity
 from rpg.models.action import Action
 
 class Character(Entity):
-    def __init__(self, name: str, title: str, level: int, attributes: dict, base_hp: int, equipment: list[dict] = []):
+    def __init__(
+        self, 
+        name: str, 
+        title: str, 
+        level: int, 
+        attributes: dict, 
+        base_hp: int, 
+        equipment: list[dict] = []
+    ):
         super().__init__(name, title, level, attributes, base_hp)
         self.equipment = self._load_equipment(equipment)
         self.skills: list[Action] = []
@@ -41,7 +49,7 @@ class Character(Entity):
             weapon = self.get_equipment('off_hand')
         return self.get_attr_mod(weapon.proficience_mod)
     
-    def choose_action(self):
+    def choose_action(self) -> Action:
         print(f"{self.name}'s turn. Choose an action:")
         print('1. Attack')
         print('2. Defend')
@@ -59,13 +67,28 @@ class Character(Entity):
                     return self.use_item()
                 case _:
                     print('Invalid choice, try again.')
+
+    def attack(self):
+        return Action(
+            self,
+            "Attack",
+            "attack",
+            "Attacks the target, dealing damage based on attributes and equipment.",
+        )
+
+    def defend(self):
+        return Action(
+            self,
+            "Defend",
+            "defend",
+            "Defends against the next attack, reducing damage taken."
+        )
     
     def use_skill(self):
         ...  # This should be defined in subclasses
 
     def use_item(self):
         ...  # This should be defined in subclasses
-            
 
     def get_equipment(self, slot: str) -> Equipment:
         return self.equipment.get(slot, EMPTY_SLOT)

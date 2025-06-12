@@ -80,7 +80,8 @@ class ElderCore:
         self.message = message
 
     def _duel(self):
-        self.combat_controller.duel([self.characters[0], self.characters[1]], [self.characters[2]])
+        from rpg.models.monsters.goblin import Goblin
+        self.combat_controller.duel([self.characters[0], self.characters[1], self.characters[2]], [Goblin(), Goblin()])
 
     def _options_menu(self):
         while True:

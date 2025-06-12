@@ -1,4 +1,5 @@
 from rpg.combat.turn_processor import TurnProcessor
+from rpg.utils.auxiliar_func import clear
 from rpg.models.character import Character
 from rpg.models.entity import Entity
 
@@ -12,6 +13,8 @@ class CombatLoop:
         round_count = 1
         while not self._check_end_condition():
             for actor in self.turn_order:
+                clear()
+                print(f"=== Round {round_count} ===")
                 if actor.hp <= 0:
                     continue
                 TurnProcessor.process_turn(actor, self.allies, self.enemies)

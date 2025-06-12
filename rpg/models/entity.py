@@ -51,6 +51,9 @@ class Entity:
     @property
     def stunned(self) -> bool:
         return "stunned" in self._status_effects
+    
+    def choose_action() -> Action:
+        ...  # This should be defined in subclasses
 
     def get_attr(self, attr: str) -> int:
         if attr not in ATTR_NAMES:
@@ -94,3 +97,6 @@ class Entity:
             "defend",
             "Defends against the next attack, reducing damage taken."
         )
+    
+    def describe(self):
+        return f"{self.name}, {self.title} - Level {self.level} - HP: {self.hp}/{self.hp_max}"

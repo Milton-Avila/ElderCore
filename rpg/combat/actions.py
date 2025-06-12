@@ -8,8 +8,9 @@ class ActionSystem:
     def resolve(action: Action, actor: Entity, allies: list[Character], enemies: list[Entity]):
         if action.type == "attack":
             target = ActionSystem.choose_target(enemies)
-            action.effect(target)
             DamageSystem.resolve_attack(actor, target)
+            if action.effect:
+                action.effect(target)
         elif action.type == "defend":
             actor.defend()
         elif action.type == "ability":
