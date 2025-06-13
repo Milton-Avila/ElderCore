@@ -1,3 +1,4 @@
+from rpg.combat.aggro import AggroSystem
 from rpg.models.action import Action
 from rpg.packages import ATTR_NAMES
 from rpg.models.attributes import Attributes, CombatStats
@@ -34,11 +35,11 @@ class Entity:
 
     @property
     def initiative(self) -> int:
-        return self.get_attr_mod("dexterity")
+        return self.get_attr_mod('dexterity')
 
     @property
     def prof_bonus(self) -> int:
-        raise NotImplementedError("Subclasses must implement prof_bonus")
+        raise NotImplementedError('Subclasses must implement prof_bonus')
 
     @property
     def damage_reduction(self) -> int:
@@ -50,14 +51,14 @@ class Entity:
     
     @property
     def stunned(self) -> bool:
-        return "stunned" in self._status_effects
+        return 'stunned' in self._status_effects
     
-    def choose_action() -> Action:
+    def choose_action(self, allies, enemies, aggro_system: AggroSystem) -> Action:
         ...  # This should be defined in subclasses
 
     def get_attr(self, attr: str) -> int:
         if attr not in ATTR_NAMES:
-            raise ValueError(f"Invalid attribute: {attr}")
+            raise ValueError(f'Invalid attribute: {attr}')
         return self.attributes.values[attr]
 
     def get_attr_mod(self, attr: str) -> int:
@@ -81,22 +82,25 @@ class Entity:
     def cleanup_expired_effects(self):
         self._status_effects = {name: effect for name, effect in self._status_effects.items() if getattr(effect, 'remaining_turns', 1) > 0}
 
-    def attack(self):
+    def choose_action(self, allies, enemies, aggro_system: AggroSystem):
+        ...
+
+    def attack(self, target):
         return Action(
             self,
-            "Attack",
-            "attack",
-            "Attacks the target, dealing damage based on attributes and equipment.",
-            effect=lambda target: target.take_damage(self.base_dmg + self.prof_bonus)
+            'Attack',
+            'attack',
+            'Attacks the target, dealing damage based on attributes and equipment.',
+            effect=lambda target=target: target.take_damage(self.base_dmg + self.prof_bonus)
         )
 
     def defend(self):
         return Action(
             self,
-            "Defend",
-            "defend",
-            "Defends against the next attack, reducing damage taken."
+            'Defend',
+            'defend',
+            'Defends against the next attack, reducing damage taken.'
         )
     
     def describe(self):
-        return f"{self.name}, {self.title} - Level {self.level} - HP: {self.hp}/{self.hp_max}"
+        return f'{self.name}, {self.title} - Level {self.level} - HP: {self.hp}/{self.hp_max}'

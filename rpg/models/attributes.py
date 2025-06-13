@@ -33,9 +33,9 @@ class CombatStats:
 
     def to_dict(self) -> dict:
         return {
-            "hp_max": self.hp_max,
-            "hp": self.hp,
-            "damage_reduction": self.damage_reduction
+            'hp_max': self.hp_max,
+            'hp': self.hp,
+            'damage_reduction': self.damage_reduction
         }
 
 
@@ -59,7 +59,7 @@ class Attributes:
 
     def get_modifier(self, attr: str) -> int:
         if attr not in ATTR_NAMES:
-            raise ValueError(f"Invalid attribute: {attr}")
+            raise ValueError(f'Invalid attribute: {attr}')
         return self._calc_mod(self._values[attr])
 
     def to_dict(self) -> dict[str, int]:

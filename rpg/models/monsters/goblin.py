@@ -1,3 +1,4 @@
+from rpg.combat.aggro import AggroSystem
 from rpg.models.entity import Entity
 
 class Goblin(Entity):
@@ -5,13 +6,13 @@ class Goblin(Entity):
 
     def __init__(self):
         super().__init__(
-            name="Goblin Rasteiro",
-            title="O Espreitador",
+            name='Goblin Rasteiro',
+            title='O Espreitador',
             level=1,
             attributes={
-                "dexterity": 13,
-                "constitution": 10,
-                "strength": 10
+                'dexterity': 13,
+                'constitution': 10,
+                'strength': 10
             },
             base_hp=self.BASE_HP
         )
@@ -22,7 +23,7 @@ class Goblin(Entity):
 
     @property
     def prof_bonus(self):
-        return self.get_attr_mod("dexterity")
+        return self.get_attr_mod('dexterity')
 
-    def choose_action(self):
+    def choose_action(self, allies: list[Entity], enemies: list[Entity], aggro_system: AggroSystem):
         return self.attack()

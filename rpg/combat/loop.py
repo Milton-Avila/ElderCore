@@ -13,10 +13,10 @@ class CombatLoop:
         round_count = 1
         while not self._check_end_condition():
             for actor in self.turn_order:
-                clear()
-                print(f"=== Round {round_count} ===")
                 if actor.hp <= 0:
                     continue
+                print(actor)
+                print(f"=== Round {round_count} ===")
                 TurnProcessor.process_turn(actor, self.allies, self.enemies)
             round_count += 1
 
