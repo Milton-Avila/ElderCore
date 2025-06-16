@@ -1,14 +1,11 @@
 from dataclasses import dataclass, field
 from rpg.models.base.item import HandItem, HeadItem, EMPTY_SLOT
 
-@dataclass
 class Equipment:
-    equip_data: list[dict] = field(default_factory=dict)
-
-    def __post_init__(self):
+    def __init__(self, equip_data: list[dict]):
         self.slots = {
             item_data['slot']: self.__load_item(item_data)
-            for item_data in self.equip_data
+            for item_data in equip_data
         }
 
     @property

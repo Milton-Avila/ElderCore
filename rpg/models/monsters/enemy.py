@@ -6,6 +6,9 @@ from rpg.models.base.entity import Entity
 class Enemy(Entity):
     behavior: str = "aggressive"  # pode ser um enum futuramente
     tags: list[str] = field(default_factory=list)
+    
+    def __post_init__(self):
+        super().__init__()
 
     @property
     def base_dmg(self) -> int:

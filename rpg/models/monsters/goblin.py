@@ -4,17 +4,14 @@ from rpg.models.monsters.enemy import Enemy
 class Goblin(Enemy):
     BASE_HP = 10
 
-    def __init__(self):
-        super().__init__(
-            name='Goblin Rasteiro',
-            title='O Espreitador',
-            level=1,
-            attrs_data={
-                'dexterity': 13,
-                'constitution': 10,
-                'strength': 10
-            },
-        )
+    name='Goblin Rasteiro'
+    title='O Espreitador'
+    level=1
+    attrs_data={
+        'dexterity':13,
+        'constitution':10,
+        'strength':10
+    }
 
     @property
     def base_dmg(self):

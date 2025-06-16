@@ -1,8 +1,15 @@
 from dataclasses import dataclass, field
 
 # Local
-from rpg.packages import DEFAULT_ATTR_SCORE
-from rpg.packages import ATTR_NAMES
+DEFAULT_ATTR_SCORE = 8
+ATTR_NAMES = [
+    'strength',
+    'dexterity',
+    'constitution',
+    'intelligence',
+    'wisdom',
+    'charisma'
+]
 
 
 class CharacterSheet:
@@ -52,6 +59,7 @@ class Attributes:
     _base: dict[str, int] = field(default_factory=dict)
     
     def __post_init__(self):
+        print(self._base)
         self._values = {
             attr: self._base.get(attr, DEFAULT_ATTR_SCORE)
             for attr in ATTR_NAMES

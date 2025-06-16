@@ -1,9 +1,6 @@
-from rpg.combat.aggro import AggroSystem
-from rpg.packages import EQUIPMENT_SLOTS
 from rpg.models.base.equipment import Equipment
-from rpg.models.base.item import Item, EMPTY_SLOT
+from rpg.models.base.item import EMPTY_SLOT
 from rpg.models.base.entity import Entity
-from rpg.models.base.action import Action
 
 
 class Character(Entity):
@@ -62,5 +59,5 @@ class Character(Entity):
             'title': self.title,
             'level': self.level,
             'attrs_data': {k: v for k, v in self.attrs.to_dict().items() if v != 8},
-            'equip_data': [item.to_dict() for item in self.equipment.values() if item != EMPTY_SLOT]
+            'equip_data': self.equipment.to_dict()
         }

@@ -2,11 +2,12 @@ import json
 
 # Local
 from rpg.configs import CHARS_DATA_PATH, SETTINGS
-from rpg.view.sheet_view import display_character_sheet
 from rpg.utils.auxiliar_func import clear, pause
-
-from rpg.models.characters import Duelist, Werebeast, Healer
+from rpg.view.sheet_view import display_character_sheet
 from rpg.combat.controller import CombatController
+
+# Models
+from rpg.models.characters import Duelist, Werebeast, Healer
 from rpg.models.characters.character import Character
 
 CLASS_MAP = {

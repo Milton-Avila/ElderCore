@@ -8,18 +8,16 @@ from rpg.models.base.conditions import PoisonedStatus
 
 class Goblin(Entity):
     BASE_HP = 8
-
-    def __init__(self):
-        super().__init__(
-            name='Goblin Rasteiro',
-            title='O Espreitador',
-            level=1,
-            attrs_data={\
-                'dexterity': 14,
-                'constitution': 8,
-                'strength': 10
-            },
-        )
+    
+    name='Goblin Rasteiro'
+    title='O Espreitador'
+    level=1
+    attrs_data={
+        'dexterity':14,
+        'constitution':8,
+        'strength':10
+    }
+    
 
     @property
     def base_dmg(self):
