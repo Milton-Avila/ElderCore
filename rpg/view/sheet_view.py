@@ -1,4 +1,4 @@
-from rpg.models.character import Character
+from rpg.models.characters.character import Character
 from rpg.packages import EQUIPMENT_SLOTS
 
 # Colors
@@ -8,9 +8,8 @@ RESET = '\033[0m'
 
 # Helper lambdas
 bio = lambda char: char.bio
-base_attrs = lambda char: char.attributes.to_dict()
 bonuses = lambda char: {} # Nothing for now
-attr_names = lambda char: list(base_attrs(char).keys())
+attr_names = lambda char: list(bio(char)['char_sheet']['attrs'].keys())
 
 # Line structure
 line_len = 71
@@ -42,14 +41,15 @@ def render_equipment_line(slot, item):
 
 def _render_character_lines(char):
     bio_data = bio(char)
-    base = base_attrs(char)
+    base = bio_data['char_sheet']['attrs']
     bonus = bonuses(char)
     attrs = attr_names(char)
 
     lines = [
         border_top(char),
-        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<34}   {RED}Max HP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2} {GREEN}│{RESET}',
-        f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["combat_stats"]["hp_max"]:>2} {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<38}   {RED}HP{RESET}    : {bio_data["char_sheet"]["hp"]:>2}/{bio_data["char_sheet"]["hp_max"]:>2} {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["char_sheet"]["level"]:>2}{"":<35}{RED}      {RESET}            {GREEN}│{RESET}',
+        # f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["char_sheet"]["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["char_sheet"]["hp_max"]:>2} {GREEN}│{RESET}',
         border_section("Vital Status")
     ]
 
@@ -58,7 +58,7 @@ def _render_character_lines(char):
 
     lines.append(border_section("Gear"))
     for slot in EQUIPMENT_SLOTS:
-        item = char.get_equipment(slot)
+        item = char.equipment.get_equipment(slot)
         lines.append(render_equipment_line(slot, item))
 
     lines.append(border_bottom())

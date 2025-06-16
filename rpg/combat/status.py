@@ -1,4 +1,4 @@
-from rpg.models.entity import Entity
+from rpg.models.base.entity import Entity
 
 class StatusSystem:
     @staticmethod

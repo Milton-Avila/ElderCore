@@ -3,20 +3,18 @@
     "name": "Kharos",
     "title": "O Duelista Profano",
     "level": 1,
-    "attributes": {
+    "attrs_data": {
       "strength": 10,
       "dexterity": 17,
       "constitution": 14,
       "charisma": 14
     },
-    "equipment": [
+    "equip_data": [
       {
         "name": "Bavalack",
         "slot": "main_hand",
         "title": "A Lamina Demoníaca",
-        "base_dmg": 6,
-        "dmg_type": "slashing",
-        "proficience_mod": "dexterity"
+        "base_dmg": 6
       }
     ]
   },
@@ -24,13 +22,13 @@
     "name": "Myra",
     "title": "A Guardiã Lunar",
     "level": 1,
-    "attributes": {
+    "attrs_data": {
       "dexterity": 11,
       "constitution": 10,
-      "intelligence": 17,
-      "wisdom": 15
+      "intelligence": 15,
+      "wisdom": 17
     },
-    "equipment": [
+    "equip_data": [
       {
         "name": "Lilith Dourada",
         "slot": "head",
@@ -42,11 +40,11 @@
     "name": "Lunasha",
     "title": "A Besta Maldita",
     "level": 1,
-    "attributes": {
+    "attrs_data": {
       "strength": 16,
       "dexterity": 13,
       "constitution": 17
     },
-    "equipment": []
+    "equip_data": []
   }
 ]

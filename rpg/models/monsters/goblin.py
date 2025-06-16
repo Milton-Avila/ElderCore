@@ -1,7 +1,7 @@
 from rpg.combat.aggro import AggroSystem
-from rpg.models.entity import Entity
+from rpg.models.monsters.enemy import Enemy
 
-class Goblin(Entity):
+class Goblin(Enemy):
     BASE_HP = 10
 
     def __init__(self):
@@ -9,12 +9,11 @@ class Goblin(Entity):
             name='Goblin Rasteiro',
             title='O Espreitador',
             level=1,
-            attributes={
+            attrs_data={
                 'dexterity': 13,
                 'constitution': 10,
                 'strength': 10
             },
-            base_hp=self.BASE_HP
         )
 
     @property
@@ -24,6 +23,3 @@ class Goblin(Entity):
     @property
     def prof_bonus(self):
         return self.get_attr_mod('dexterity')
-
-    def choose_action(self, allies: list[Entity], enemies: list[Entity], aggro_system: AggroSystem):
-        return self.attack()

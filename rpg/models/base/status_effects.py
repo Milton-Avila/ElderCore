@@ -1,4 +1,7 @@
-class StatusEffect:
+from abc import ABC
+
+
+class StatusEffect(ABC):
     def apply(self, entity):
         pass
 
@@ -7,6 +10,17 @@ class StatusEffect:
 
     def on_turn_end(self, entity):
         pass
+
+
+# Specific
+class DefenseStatus(StatusEffect):
+    def __init__(self, damage_per_turn=1, duration=3):
+        self.damage = damage_per_turn
+        self.remaining_turns = duration
+
+    def apply(self, entity):
+        print(f'{entity.name} está defendendo e ganha {entity.get_attr_mod("constitution")} shield!')
+        self.remaining_turns -= 1
 
 class BleedingEffect(StatusEffect):
     def __init__(self, damage_per_turn=1, duration=3):

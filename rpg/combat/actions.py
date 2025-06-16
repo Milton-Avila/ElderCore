@@ -1,13 +1,17 @@
+from rpg.combat.aggro import AggroSystem
 from rpg.combat.damage import DamageSystem
-from rpg.models.entity import Entity
-from rpg.models.action import Action
-from rpg.models.character import Character
+from rpg.models.base.entity import Entity
+from rpg.models.base.action import Action
+from rpg.models.characters.character import Character
 
 class ActionSystem:
     @staticmethod
     def resolve(action: Action, actor: Entity, allies: list[Character], enemies: list[Entity]):
         if action.type == "attack":
-            target = ActionSystem.choose_target(enemies)
+            if actor in allies:
+                target = ActionSystem.choose_target(enemies)
+            elif actor in enemies:
+                target = AggroSystem.get_primary_target(allies)
             DamageSystem.resolve_attack(actor, target)
             if action.effect:
                 action.effect(target)

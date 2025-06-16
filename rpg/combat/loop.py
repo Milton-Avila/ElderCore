@@ -1,7 +1,8 @@
-from rpg.combat.turn_processor import TurnProcessor
 from rpg.utils.auxiliar_func import clear
-from rpg.models.character import Character
-from rpg.models.entity import Entity
+from rpg.models.characters.character import Character
+from rpg.models.base.entity import Entity
+from rpg.combat.status import StatusSystem
+from rpg.combat.actions import ActionSystem
 
 class CombatLoop:
     def __init__(self, allies: list[Character], enemies: list[Entity]):
@@ -11,13 +12,14 @@ class CombatLoop:
 
     def start_combat(self):
         round_count = 1
-        while not self._check_end_condition():
+        while True:
             for actor in self.turn_order:
                 if actor.hp <= 0:
                     continue
-                print(actor)
                 print(f"=== Round {round_count} ===")
                 TurnProcessor.process_turn(actor, self.allies, self.enemies)
+                if self._check_end_condition():
+                    break
             round_count += 1
 
     def _check_end_condition(self):
@@ -25,3 +27,13 @@ class CombatLoop:
 
     def _define_turn_order(self) -> list[Entity]:
         return sorted(self.allies + self.enemies, key=lambda x: x.initiative, reverse=True)
+
+
+class TurnProcessor:
+    @staticmethod
+    def process_turn(actor: Entity, allies: list[Character], enemies: list[Entity]):
+        StatusSystem.apply_effects(actor)
+        if actor.stunned:
+            return
+        action = actor.choose_action()
+        ActionSystem.resolve(action, actor, allies, enemies)
