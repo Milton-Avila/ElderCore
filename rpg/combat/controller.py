@@ -11,7 +11,6 @@ class CombatController:
         session.start()
 
 from abc import ABC, abstractmethod
-from rpg.combat.status import StatusSystem
 from rpg.models.base.entity import Entity
 from rpg.models.base.action import Action
 
@@ -23,7 +22,13 @@ class Phase(ABC):
 
 class StatusPhase(Phase):
     def execute(self, session: 'CombatSession', actor: Entity):
-        StatusSystem.apply_effects(actor)
+        StatusEffect.apply_effects(actor)
+
+    def apply(self, entity):
+        entity.take_damage(self.damage)
+        print(f'{entity.name} está envenenado e perde {self.damage} HP!')
+        self.remaining_turns -= 1
+
 
 class DecisionPhase(Phase):
     def execute(self, session: 'CombatSession', actor: Entity):

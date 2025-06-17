@@ -6,12 +6,11 @@ from rpg.models.base.status_effects import StatusEffect
 
 
 class CombatLoop:
-    def __init__(self, allies: list[Character], enemies: list[Entity]):
+    def battle(self, allies: list[Character], enemies: list[Entity]):
         self.allies = allies
         self.enemies = enemies
         self.turn_order = self._define_turn_order()
-
-    def start_combat(self):
+        
         round_count = 1
         while True:
             for actor in self.turn_order:
@@ -41,6 +40,6 @@ class TurnProcessor:
 
     @staticmethod
     def apply_effects(entity: Entity):
-        for effect in entity.conditions_list:
-            effect.apply()
+        for condition in entity.conditions_list:
+            condition.apply()
         entity.conditions.cleanup_expired_effects()

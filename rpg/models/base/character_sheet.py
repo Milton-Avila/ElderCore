@@ -54,14 +54,13 @@ class CharacterSheet:
         }
 
 
-@dataclass
 class Attributes:
-    _base: dict[str, int] = field(default_factory=dict)
-    
-    def __post_init__(self):
-        print(self._base)
+    def __init__(self, attrs_data: dict[str, int]):
+        self.refresh(attrs_data)
+
+    def refresh(self, attrs_data: dict[str, int]):
         self._values = {
-            attr: self._base.get(attr, DEFAULT_ATTR_SCORE)
+            attr: attrs_data.get(attr, DEFAULT_ATTR_SCORE)
             for attr in ATTR_NAMES
         }
 

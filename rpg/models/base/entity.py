@@ -23,7 +23,6 @@ class Entity(ABC):
     # 💀 Conditions
     @property
     def conditions_list(self) -> list[StatusEffect]:
-        print(self.conditions.status_effects.items())
         return self.conditions.status_effects.items()
 
     @property

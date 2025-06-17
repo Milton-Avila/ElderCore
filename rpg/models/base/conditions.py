@@ -4,15 +4,15 @@ from dataclasses import dataclass, field
 from rpg.models.base.status_effects import StatusEffect
 
 
-@dataclass(init=False, kw_only=True)
 class Conditions:
-    status_effects: dict = field(default_factory=dict)
+    def __init__(self, status_effects:list ={}):
+        self.status_effects = status_effects
 
     @property
     def stunned(self) -> bool:
         return 'stunned' in self.status_effects
 
-    def add_status_effect(self, key: str, effect: StatusEffect):
+    def add_status_effect(self, key:str, effect: StatusEffect):
         self.status_effects[key] = ...
 
     def cleanup_expired_effects(self):

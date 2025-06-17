@@ -4,7 +4,7 @@ import json
 from rpg.configs import CHARS_DATA_PATH, SETTINGS
 from rpg.utils.auxiliar_func import clear, pause
 from rpg.view.sheet_view import display_character_sheet
-from rpg.combat.controller import CombatController
+from rpg.combat.loop import CombatLoop
 
 # Models
 from rpg.models.characters import Duelist, Werebeast, Healer
@@ -15,6 +15,13 @@ CLASS_MAP = {
     'constitution':Werebeast,
     'wisdom':Healer,
 }
+
+# TODO: Use speech text:
+# for _char in sentence:
+#             sys.stdout.write(_char)
+#             sys.stdout.flush()
+#             time.sleep(0.05)
+#         print()
 
 def load_characters_from_json(filepath:str = CHARS_DATA_PATH) -> list[Character]:
     def create_character(char_data:dict):
@@ -36,7 +43,7 @@ def save_characters_to_json(characters:list[Character], filepath:str = CHARS_DAT
 class ElderCore:
     def __init__(self):
         self.characters:list[Character] = load_characters_from_json()
-        self.combat_controller = CombatController()
+        self.combat_controller = CombatLoop()
         pause('Started ElderCore RPG!')
 
     def main(self) -> None:

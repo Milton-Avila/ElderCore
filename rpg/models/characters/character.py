@@ -58,6 +58,6 @@ class Character(Entity):
             'name': self.name,
             'title': self.title,
             'level': self.level,
-            'attrs_data': {k: v for k, v in self.attrs.to_dict().items() if v != 8},
+            'attrs_data': {k: v for k, v in self.char_sheet.attrs.to_dict().items() if v != 8},
             'equip_data': self.equipment.to_dict()
         }
