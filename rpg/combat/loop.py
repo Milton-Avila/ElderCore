@@ -1,8 +1,9 @@
 from rpg.utils.auxiliar_func import clear
 from rpg.models.characters.character import Character
 from rpg.models.base.entity import Entity
-from rpg.combat.status import StatusSystem
 from rpg.combat.actions import ActionSystem
+from rpg.models.base.status_effects import StatusEffect
+
 
 class CombatLoop:
     def __init__(self, allies: list[Character], enemies: list[Entity]):
@@ -30,10 +31,16 @@ class CombatLoop:
 
 
 class TurnProcessor:
-    @staticmethod
-    def process_turn(actor: Entity, allies: list[Character], enemies: list[Entity]):
-        StatusSystem.apply_effects(actor)
+    @classmethod
+    def process_turn(cls, actor: Entity, allies: list[Character], enemies: list[Entity]):
+        cls.apply_effects(actor)
         if actor.stunned:
             return
         action = actor.choose_action()
         ActionSystem.resolve(action, actor, allies, enemies)
+
+    @staticmethod
+    def apply_effects(entity: Entity):
+        for effect in entity.conditions_list:
+            effect.apply()
+        entity.conditions.cleanup_expired_effects()

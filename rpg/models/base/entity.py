@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 # Local
 from rpg.models.base.character_sheet import CharacterSheet
 from rpg.models.base.conditions import Conditions
+from rpg.models.base.status_effects import StatusEffect
 
 
 class Entity(ABC):
@@ -20,6 +21,11 @@ class Entity(ABC):
         return f'{self.name}, {self.title} - Level {self.level} - HP: {self.hp}/{self.hp_max}'
 
     # 💀 Conditions
+    @property
+    def conditions_list(self) -> list[StatusEffect]:
+        print(self.conditions.status_effects.items())
+        return self.conditions.status_effects.items()
+
     @property
     def alive(self) -> bool:
         return self.char_sheet.alive
