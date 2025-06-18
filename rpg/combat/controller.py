@@ -11,8 +11,8 @@ class CombatController:
         session.start()
 
 from abc import ABC, abstractmethod
-from rpg.models.base.entity import Entity
-from rpg.models.base.action import Action
+from rpg.models.entity.entity import Entity
+from rpg.models.entity.action import Action
 
 # === combat/engine.py ===
 class Phase(ABC):

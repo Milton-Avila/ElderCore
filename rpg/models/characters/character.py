@@ -1,18 +1,18 @@
-from rpg.models.base.equipment import Equipment
-from rpg.models.base.item import EMPTY_SLOT
-from rpg.models.base.entity import Entity
+from rpg.models.entity.equipment import Equipment
+from rpg.models.entity.item import EMPTY_SLOT
+from rpg.models.entity.entity import Entity
 
 
 class Character(Entity):
     def __init__(self, name:str, title:str, level:int, attrs_data:dict[str, int], equip_data:list[dict]):
         self.name = name
         self.title = title
-        self.level = level
-        self.attrs_data = attrs_data
-        self.equip_data = equip_data
+        self._level = level
+        self._attrs_data = attrs_data
+        self._equip_data = equip_data
         
         super().__init__()
-        self.equipment = Equipment(self.equip_data)
+        self._equipment = Equipment(self._equip_data)
 
     @property
     def bio(self) -> dict:
@@ -22,10 +22,21 @@ class Character(Entity):
             'char_sheet': self.char_sheet.to_dict()
         }
 
-    # @property
-    # def base_dmg(self) -> int:
-    #     weapon = self.main_weapon
-    #     return weapon.base_dmg if weapon != EMPTY_SLOT else 1
+    @property
+    def equipment(self) -> Equipment:
+        return self._equipment
+
+    @property
+    def main_weapon(self):
+        return self.equipment.main_weapon
+    
+    @property
+    def off_hand(self):
+        return self.equipment.off_hand
+
+    @property
+    def base_dmg(self):
+        return self.main_weapon.base_dmg
 
     # def choose_action(self, allies: list[Entity], enemies: list[Entity], aggro: AggroSystem) -> Action:
     #     def choose_target(targets: List[Entity]) -> Entity:
@@ -57,7 +68,7 @@ class Character(Entity):
         return {
             'name': self.name,
             'title': self.title,
-            'level': self.level,
+            'level': self._level,
             'attrs_data': {k: v for k, v in self.char_sheet.attrs.to_dict().items() if v != 8},
-            'equip_data': self.equipment.to_dict()
+            'equip_data': self._equipment.to_dict()
         }

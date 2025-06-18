@@ -6,7 +6,6 @@ from random import randint
 class Item:
     name: str
     title: str
-    slot: str
 
     def __str__(self):
         return f"{self.name}{f' ({self.title})' if self.title else ''}"
@@ -33,4 +32,4 @@ class HeadItem(Item):
 
 
 # Singleton vazio
-EMPTY_SLOT = Item(name="Nothing", title="", slot=None)
+EMPTY_SLOT = Item(name="Nothing", title="")

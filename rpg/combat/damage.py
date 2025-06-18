@@ -1,7 +1,7 @@
 import random
 
 # Local
-from rpg.models.base.entity import Entity
+from rpg.models.entity.entity import Entity
 
 class DamageSystem:
     @staticmethod

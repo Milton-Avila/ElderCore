@@ -11,8 +11,8 @@
     },
     "equip_data": [
       {
-        "name": "Bavalack",
         "slot": "main_hand",
+        "name": "Bavalack",
         "title": "A Lamina Demoníaca",
         "base_dmg": 6
       }
@@ -30,8 +30,8 @@
     },
     "equip_data": [
       {
-        "name": "Lilith Dourada",
         "slot": "head",
+        "name": "Lilith Dourada",
         "title": "A Tiara prateada"
       }
     ]

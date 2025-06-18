@@ -6,8 +6,8 @@ class Goblin(Enemy):
 
     name='Goblin Rasteiro'
     title='O Espreitador'
-    level=1
-    attrs_data={
+    _level=1
+    _attrs_data={
         'dexterity':13,
         'constitution':10,
         'strength':10

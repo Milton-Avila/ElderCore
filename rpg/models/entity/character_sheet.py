@@ -14,7 +14,7 @@ ATTR_NAMES = [
 
 class CharacterSheet:
     def __init__(self, level: int, attrs_data: dict[str, int], base_hp: int):
-        self.level = level
+        self._level = level
         self.attrs = Attributes(attrs_data)
         self.base_hp = base_hp
 
@@ -39,7 +39,7 @@ class CharacterSheet:
     def _calc_hp_max(self) -> int:
         const_mod = self.attrs.get_modifier('constitution')
         bonus_hp_level = self.base_hp // 2
-        return self.base_hp + const_mod + (bonus_hp_level + const_mod) * (self.level - 1)
+        return self.base_hp + const_mod + (bonus_hp_level + const_mod) * (self._level - 1)
 
     def _calc_damage_reduction(self) -> int:
         return self.attrs.get_modifier('constitution')
@@ -48,7 +48,7 @@ class CharacterSheet:
         return {
             'hp_max': self.hp_max,
             'hp': self.hp,
-            'level': self.level,
+            'level': self._level,
             'attrs': self.attrs.to_dict(),
             'damage_reduction': self.damage_reduction
         }

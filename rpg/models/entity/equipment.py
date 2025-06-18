@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from rpg.models.base.item import HandItem, HeadItem, EMPTY_SLOT
+from rpg.models.entity.item import HandItem, HeadItem, EMPTY_SLOT
+
 
 class Equipment:
     def __init__(self, equip_data: list[dict]):
@@ -7,6 +8,12 @@ class Equipment:
             item_data['slot']: self.__load_item(item_data)
             for item_data in equip_data
         }
+        
+    @property
+    def main_weapon(self) -> HandItem:
+        if self.slots.get('main_hand') is not EMPTY_SLOT:
+            return self.slots.get('main_hand', EMPTY_SLOT)
+        return self.slots.get('off_hand', EMPTY_SLOT)
 
     @property
     def main_hand(self) -> HandItem:
@@ -29,4 +36,14 @@ class Equipment:
     @staticmethod
     def __load_item(item_data: dict) -> HandItem|HeadItem:
         cls = HandItem if item_data.get('base_dmg', False) else HeadItem
+        item_data.pop('slot', None)
         return cls(**item_data)
+    
+    def to_dict(self) -> list[dict]:
+        return [
+            {
+                'slot': slot, **item.__dict__
+            }
+            for slot, item in self.slots.items()
+            if item != EMPTY_SLOT
+        ]

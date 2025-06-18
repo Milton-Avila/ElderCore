@@ -2,17 +2,17 @@ import random
 
 # Local
 from rpg.combat.aggro import AggroSystem
-from rpg.models.base.action import Action
-from rpg.models.base.entity import Entity
-from rpg.models.base.conditions import PoisonedStatus
+from rpg.models.entity.action import Action
+from rpg.models.entity.entity import Entity
+from rpg.models.entity.conditions import PoisonedStatus
 
 class Goblin(Entity):
     BASE_HP = 8
     
     name='Goblin Rasteiro'
     title='O Espreitador'
-    level=1
-    attrs_data={
+    _level=1
+    _attrs_data={
         'dexterity':14,
         'constitution':8,
         'strength':10

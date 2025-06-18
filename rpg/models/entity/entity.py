@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 # Local
-from rpg.models.base.character_sheet import CharacterSheet
-from rpg.models.base.conditions import Conditions
-from rpg.models.base.status_effects import StatusEffect
+from rpg.models.entity.character_sheet import CharacterSheet
+from rpg.models.entity.conditions import Conditions
+from rpg.models.entity.status_effects import StatusEffect
 
 
 class Entity(ABC):
@@ -10,17 +10,25 @@ class Entity(ABC):
 
     name: str
     title: str
-    level: int
-    attrs_data: dict[str, int]
+    _level: int
+    _attrs_data: dict[str, int]
 
     def __init__(self):
-        self.char_sheet = CharacterSheet(self.level, self.attrs_data, self.BASE_HP)
-        self.conditions = Conditions()
+        self._char_sheet = CharacterSheet(self._level, self._attrs_data, self.BASE_HP)
+        self._conditions = Conditions()
 
     def describe(self) -> str:
-        return f'{self.name}, {self.title} - Level {self.level} - HP: {self.hp}/{self.hp_max}'
+        return f'{self.name}, {self.title} - Level {self._level} - HP: {self.hp}/{self.hp_max}'
+    
+    @property
+    def char_sheet(self) -> CharacterSheet:
+        return self._char_sheet
 
     # 💀 Conditions
+    @property
+    def conditions(self) -> Conditions:
+        return self._conditions
+    
     @property
     def conditions_list(self) -> list[StatusEffect]:
         return self.conditions.status_effects.items()

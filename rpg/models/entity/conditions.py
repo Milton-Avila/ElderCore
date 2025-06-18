@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 # Local
-from rpg.models.base.status_effects import StatusEffect
+from rpg.models.entity.status_effects import StatusEffect
 
 
 class Conditions:

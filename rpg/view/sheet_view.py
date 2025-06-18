@@ -53,7 +53,7 @@ def _render_character_lines(char):
 
     lines = [
         border_top(char),
-        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<36} {RED}HP{RESET}      : {"/".join((str(bio_data["char_sheet"]["hp"]), str(bio_data["char_sheet"]["hp_max"]))):>7} {GREEN}│{RESET}',
+        f'{GREEN}│{RESET} {RED}Name{RESET}         : {bio_data["name"]:<36} {RED}HP{RESET} :      {"/".join((str(bio_data["char_sheet"]["hp"]), str(bio_data["char_sheet"]["hp_max"]))):>7} {GREEN}│{RESET}',
         f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["char_sheet"]["level"]:>2}{"":<53}{GREEN}│{RESET}',
         # f'{GREEN}│{RESET} {RED}Level{RESET}        : {bio_data["char_sheet"]["level"]:>2}{"":<35}{RED}Max MP{RESET}       : {bio_data["char_sheet"]["hp_max"]:>2} {GREEN}│{RESET}',
         border_section("Vital Status")

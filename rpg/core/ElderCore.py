@@ -2,7 +2,7 @@ import json
 
 # Local
 from rpg.configs import CHARS_DATA_PATH, SETTINGS
-from rpg.utils.auxiliar_func import clear, pause
+from rpg.utils.auxiliar_func import clear_console, slow_write, pause
 from rpg.view.sheet_view import display_character_sheet
 from rpg.combat.loop import CombatLoop
 
@@ -15,13 +15,6 @@ CLASS_MAP = {
     'constitution':Werebeast,
     'wisdom':Healer,
 }
-
-# TODO: Use speech text:
-# for _char in sentence:
-#             sys.stdout.write(_char)
-#             sys.stdout.flush()
-#             time.sleep(0.05)
-#         print()
 
 def load_characters_from_json(filepath:str = CHARS_DATA_PATH) -> list[Character]:
     def create_character(char_data:dict):
@@ -53,11 +46,10 @@ class ElderCore:
                 break
 
     def _show_menu(self, menu_type:str) -> str:
-        clear()
         if SETTINGS['show_sheets']:
             display_character_sheet(self.characters, SETTINGS['horizontal_view'])
 
-        print(SETTINGS['message'])
+        slow_write(SETTINGS['message'])
 
         menus = {
             'main': {
@@ -65,7 +57,7 @@ class ElderCore:
                 'options': {
                     '1': ('Fight', self._fight),
                     '0': ('Options', lambda: self._show_menu('options')),
-                    'q': ('Quit', lambda: self.__set_message('Goodbye adventurer.')),
+                    'q': ('Quit', lambda: slow_write('Goodbye adventurer.')),
                 }
             },
             'options': {
@@ -74,20 +66,20 @@ class ElderCore:
                     '1': (f"{'Show' if not SETTINGS['show_sheets'] else 'Hide'} Characters", self._toggle_show_characters),
                     '2': (f"Change Sheet View to {'Horizontal' if not SETTINGS['horizontal_view'] else 'Vertical'}", self._toggle_sheet_view),
                     '0': ('Save Characters', self._save_characters),
-                    'q': ('Back to Main Menu', lambda: self.__set_message('Returning to main menu.')),
+                    'q': ('Back to Main Menu', lambda: None),
                 }
             }
         }
 
         menu = menus[menu_type]
-        print(f"\n=== {menu['title']} ===")
+        print(f"\n\n=== {menu['title']} ===")
         for key, (desc, _) in menu['options'].items():
             if key == '0':
                 print('-')
             print(f"{key}) {desc}")
 
         opt = input('> ').lower()
-        clear()
+        clear_console()
 
         menu['options'].get(opt, ('Invalid option', lambda: self.__set_message('Invalid option, try again.')))[1]()
         return opt

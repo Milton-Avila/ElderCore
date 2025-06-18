@@ -1,7 +1,7 @@
 from rpg.combat.aggro import AggroSystem
 from rpg.combat.damage import DamageSystem
-from rpg.models.base.entity import Entity
-from rpg.models.base.action import Action
+from rpg.models.entity.entity import Entity
+from rpg.models.entity.action import Action
 from rpg.models.characters.character import Character
 
 class ActionSystem:

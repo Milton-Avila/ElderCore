@@ -1,8 +1,8 @@
-from rpg.utils.auxiliar_func import clear
+from rpg.utils.auxiliar_func import clear_console
 from rpg.models.characters.character import Character
-from rpg.models.base.entity import Entity
+from rpg.models.entity.entity import Entity
 from rpg.combat.actions import ActionSystem
-from rpg.models.base.status_effects import StatusEffect
+from rpg.models.entity.status_effects import StatusEffect
 
 
 class CombatLoop:

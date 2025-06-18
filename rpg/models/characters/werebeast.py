@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 # Local
 from rpg.models.characters.character import Character
-from rpg.models.base.equipment import Equipment
-from rpg.models.base.item import HandItem, EMPTY_SLOT
+from rpg.models.entity.equipment import Equipment
+from rpg.models.entity.item import HandItem, EMPTY_SLOT
 
 @dataclass
 class Werebeast(Character):
@@ -15,15 +15,11 @@ class Werebeast(Character):
         self.natural_weapon = HandItem(
             name='Bestial Claws',
             title='Life Ender',
-            slot='Natural Weapon',
-            base_dmg=5
+            base_dmg=4
         )
 
     @property
     def main_weapon(self) -> HandItem:
-        # prioriza main_hand, depois off_hand, depois natural
-        for slot in ('main_hand', 'off_hand'):
-            item = self.equipment.get(slot)
-            if item and item != EMPTY_SLOT:
-                return item
+        if self.equipment.main_weapon == EMPTY_SLOT:
+            return self.natural_weapon
         return self.natural_weapon
