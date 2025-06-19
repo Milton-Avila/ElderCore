@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 from rpg.models.entity.item import HandItem, HeadItem, EMPTY_SLOT
 
 
@@ -26,7 +25,7 @@ class Equipment:
     def get_equipment(self, slot:str) -> HandItem|HeadItem:
         return self.slots.get(slot, EMPTY_SLOT)
 
-    def equip(self, item_data: dict):
+    def equip(self, item_data:dict):
         slot = item_data.get('slot')
         if self.slots.get(slot) == EMPTY_SLOT:
             self.slots[slot] = self.__load_item(item_data)
@@ -34,7 +33,7 @@ class Equipment:
             raise ValueError(f"Slot '{slot}' is already occupied.")
 
     @staticmethod
-    def __load_item(item_data: dict) -> HandItem|HeadItem:
+    def __load_item(item_data:dict) -> HandItem|HeadItem:
         cls = HandItem if item_data.get('base_dmg', False) else HeadItem
         item_data.pop('slot', None)
         return cls(**item_data)

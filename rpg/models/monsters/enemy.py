@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 from typing import Dict
 from rpg.models.entity.entity import Entity
 

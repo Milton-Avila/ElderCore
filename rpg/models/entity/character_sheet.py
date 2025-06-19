@@ -1,5 +1,3 @@
-from dataclasses import dataclass, field
-
 # Local
 DEFAULT_ATTR_SCORE = 8
 ATTR_NAMES = [
@@ -21,14 +19,14 @@ class CharacterSheet:
         self.hp = self.base_hp*2
         self.refresh()
 
-    @property
-    def alive(self) -> bool:
-        return self.hp > 0
-
     def refresh(self):
         self.hp_max = self._calc_hp_max()
         self.hp = min(self.hp, self.hp_max)
         self.damage_reduction = self._calc_damage_reduction()
+
+    @property
+    def alive(self) -> bool:
+        return self.hp > 0
 
     def take_damage(self, amount: int) -> None:
         self.hp = max(0, self.hp - max(0, amount))
@@ -39,7 +37,11 @@ class CharacterSheet:
     def _calc_hp_max(self) -> int:
         const_mod = self.attrs.get_modifier('constitution')
         bonus_hp_level = self.base_hp // 2
-        return self.base_hp + const_mod + (bonus_hp_level + const_mod) * (self._level - 1)
+        return sum([
+            self.base_hp,
+            const_mod,
+            (bonus_hp_level + const_mod) * (self._level - 1)
+        ])
 
     def _calc_damage_reduction(self) -> int:
         return self.attrs.get_modifier('constitution')
@@ -56,9 +58,6 @@ class CharacterSheet:
 
 class Attributes:
     def __init__(self, attrs_data: dict[str, int]):
-        self.refresh(attrs_data)
-
-    def refresh(self, attrs_data: dict[str, int]):
         self._values = {
             attr: attrs_data.get(attr, DEFAULT_ATTR_SCORE)
             for attr in ATTR_NAMES

@@ -21,7 +21,7 @@ class HandItem(Item):
         return self.base_dmg - variance, self.base_dmg + variance
 
     def damage_hit(self) -> int:
-        """Return randomized damage with ±20% variance"""
+        '''Return randomized damage with ±20% variance'''
         variance = max(int(self.base_dmg * 0.2), 1)
         return randint(self.base_dmg - variance, self.base_dmg + variance)
 
@@ -32,4 +32,4 @@ class HeadItem(Item):
 
 
 # Singleton vazio
-EMPTY_SLOT = Item(name="Nothing", title="")
+EMPTY_SLOT = Item(name='Nothing', title='')

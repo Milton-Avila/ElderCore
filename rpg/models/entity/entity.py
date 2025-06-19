@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 # Local
 from rpg.models.entity.character_sheet import CharacterSheet
 from rpg.models.entity.conditions import Conditions
@@ -14,11 +14,16 @@ class Entity(ABC):
     _attrs_data: dict[str, int]
 
     def __init__(self):
-        self._char_sheet = CharacterSheet(self._level, self._attrs_data, self.BASE_HP)
         self._conditions = Conditions()
+        self._char_sheet = CharacterSheet(
+            self._level, 
+            self._attrs_data, 
+            self.BASE_HP
+        )
 
     def describe(self) -> str:
-        return f'{self.name}, {self.title} - Level {self._level} - HP: {self.hp}/{self.hp_max}'
+        return f'{self.name}, {self.title} - \
+        Level {self._level} - HP: {self.hp}/{self.hp_max}'
     
     @property
     def char_sheet(self) -> CharacterSheet:
@@ -52,8 +57,12 @@ class Entity(ABC):
 
     # 🎲 Atributos
     @property
+    def attrs_dict(self) -> dict[str, int]:
+        return self.char_sheet.attrs.values
+
+    @property
     def initiative(self) -> int:
-        return self.get_attr_mod("dexterity")
+        return self.get_attr_mod('dexterity')
 
     def get_attr_mod(self, attr: str) -> int:
         return self.char_sheet.attrs.get_modifier(attr)

@@ -20,6 +20,12 @@ attr_names = lambda char: list(bio(char)['char_sheet']['attrs'].keys())
 # Line structure
 line_len = 71
 
+def display_character_sheet(char_list: list[Character], horizontal: bool = False):
+    if horizontal:
+        _display_horizontal(char_list)
+    else:
+        _display_vertical(char_list)
+
 def border_top(char):
     return GREEN + '┌' + f" {bio(char)['title']} ".center(line_len, '─') + '┐' + RESET
 
@@ -86,9 +92,3 @@ def _display_horizontal(char_list: list[Character]):
 
     for lines in zip(*sheets):
         print(spacer.join(lines))
-
-def display_character_sheet(char_list: list[Character], horizontal: bool = False):
-    if horizontal:
-        _display_horizontal(char_list)
-    else:
-        _display_vertical(char_list)

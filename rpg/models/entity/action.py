@@ -6,13 +6,13 @@ from typing import Callable, Optional
 class Action:
     actor: object                    # quem realiza
     name: str
-    kind: str                        # "attack", "skill", "defend", "item"
+    kind: str                        # 'attack', 'skill', 'defend', 'item'
     description: str
     target: Optional[object] = None  # será preenchido na fase de decisão
     effect: Optional[Callable] = None
     threat_value: int = 0            # quantos pontos de aggro gera
 
     def perform(self):
-        """Executa o efeito da ação."""
+        '''Executa o efeito da ação.'''
         if self.effect:
             self.effect()

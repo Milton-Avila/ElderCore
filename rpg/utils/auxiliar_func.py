@@ -4,7 +4,7 @@ import os
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
     
-def slow_write(messages: str | list, delay: float = 0.07):
+def slow_write(messages: str|list, delay:float = 0.07):
     if isinstance(messages, str):
         messages = [messages]
         
@@ -18,8 +18,15 @@ def slow_write(messages: str | list, delay: float = 0.07):
             time.sleep(delay*15)
             print()
 
-def pause(message: str = ''):
+def pause(message:str = '', enter_to_continue:bool = False, delay:float = 0.07):
+    if message == '':
+        return
+
     clear_console()
-    slow_write([f'{message}', 'Press Enter to continue...'])
+    messages = [message]
+    if enter_to_continue:
+        messages.append('Press Enter to continue...')
+
+    slow_write(messages, delay)
     input()
     clear_console()

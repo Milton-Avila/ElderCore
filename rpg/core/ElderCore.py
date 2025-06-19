@@ -18,16 +18,25 @@ CLASS_MAP = {
 
 def load_characters_from_json(filepath:str = CHARS_DATA_PATH) -> list[Character]:
     def create_character(char_data:dict):
-        main_attr = max(char_data['attrs_data'], key=char_data['attrs_data'].get)
-        cls = CLASS_MAP.get(main_attr, Character)
-        return cls(**char_data)
+        main_attr = max(
+            char_data['attrs_data'],
+            key=char_data['attrs_data'].get
+        )
+
+        return CLASS_MAP.get(main_attr, Character)(
+            **char_data
+        )
 
     with open(filepath, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
     return [create_character(char_data) for char_data in data]
 
-def save_characters_to_json(characters:list[Character], filepath:str = CHARS_DATA_PATH):
+def save_characters_to_json(
+        characters:list[Character],
+        filepath:str = CHARS_DATA_PATH
+    ):
+
     arr = [char.to_dict() for char in characters]
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(arr, f, ensure_ascii=False, indent=2)
@@ -37,7 +46,7 @@ class ElderCore:
     def __init__(self):
         self.characters:list[Character] = load_characters_from_json()
         self.combat_controller = CombatLoop()
-        pause('Started ElderCore RPG!')
+        pause('Started ElderCore RPG!', enter_to_continue=True)
 
     def main(self) -> None:
         while True:
@@ -46,11 +55,15 @@ class ElderCore:
                 break
 
     def _show_menu(self, menu_type:str) -> str:
+        self.__show_message()
+
+        # Char-Sheet
         if SETTINGS['show_sheets']:
-            display_character_sheet(self.characters, SETTINGS['horizontal_view'])
+            display_character_sheet(
+                self.characters, SETTINGS['horizontal_view']
+            )
 
-        slow_write(SETTINGS['message'])
-
+        # Options
         menus = {
             'main': {
                 'title': 'Main Menu',
@@ -63,25 +76,38 @@ class ElderCore:
             'options': {
                 'title': 'Options Menu',
                 'options': {
-                    '1': (f"{'Show' if not SETTINGS['show_sheets'] else 'Hide'} Characters", self._toggle_show_characters),
-                    '2': (f"Change Sheet View to {'Horizontal' if not SETTINGS['horizontal_view'] else 'Vertical'}", self._toggle_sheet_view),
+                    '1': (f"{'Show' if not SETTINGS['show_sheets'] else 'Hide'} Characters", 
+                          self._toggle_show_characters),
+                    '2': (f"Change Sheet View to {'Horizontal' if not SETTINGS['horizontal_view'] else 'Vertical'}", 
+                          self._toggle_sheet_view),
                     '0': ('Save Characters', self._save_characters),
                     'q': ('Back to Main Menu', lambda: None),
                 }
             }
         }
 
+        # Menu
         menu = menus[menu_type]
-        print(f"\n\n=== {menu['title']} ===")
+        print(f"\n=== {menu['title']} ===")
         for key, (desc, _) in menu['options'].items():
             if key == '0':
                 print('-')
             print(f"{key}) {desc}")
 
-        opt = input('> ').lower()
+        # Input
+        opt = ''
+        while opt is '':
+            opt = input('> ').lower().strip()
         clear_console()
+        
+        if opt == '':
+            return
+        
+        menu['options'].get(opt, (
+            'Invalid option', 
+            lambda: self.__set_message('Invalid option, try again.')
+        ))[1]()
 
-        menu['options'].get(opt, ('Invalid option', lambda: self.__set_message('Invalid option, try again.')))[1]()
         return opt
 
     def _fight(self):
@@ -102,6 +128,10 @@ class ElderCore:
     def _save_characters(self):
         save_characters_to_json(self.characters)
         self.__set_message('Characters saved successfully.')
+
+    def __show_message(self):
+        pause(SETTINGS['message'], delay=0.015)
+        self.__set_message('')
 
     def __set_message(self, message:str):
         SETTINGS['message'] = message

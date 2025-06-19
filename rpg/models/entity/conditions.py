@@ -1,5 +1,3 @@
-from dataclasses import dataclass, field
-
 # Local
 from rpg.models.entity.status_effects import StatusEffect
 
@@ -26,5 +24,5 @@ class Conditions:
 
         # for name, eff in list(self.status_effects.items()):
         #     eff.apply(entity)
-        #     if getattr(eff, "remaining_turns", 1) <= 0:
+        #     if getattr(eff, 'remaining_turns', 1) <= 0:
         #         del self.status_effects[name]
